@@ -109,11 +109,6 @@ def main():
         with open(args.output_path, "w") as f:
             f.write(dumped)
 
-    # remove details before making a table
-    for key, val in results.items():
-        if "details" in val:
-            del val["details"]
-
     print(
         f"{args.model} ({args.model_args}), limit: {args.limit}, provide_description: {args.provide_description}, "
         f"num_fewshot: {args.num_fewshot}, batch_size: {args.batch_size}"
