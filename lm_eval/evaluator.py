@@ -323,7 +323,7 @@ def evaluate(
             results[task_name][metric + "_stderr"] = stderr(items)
 
         if verbose and task_name in details:
-            results["details"] = details[task_name]
+            results[task_name]["details"] = details[task_name]
 
     return {"results": dict(results), "versions": dict(versions)}
 
