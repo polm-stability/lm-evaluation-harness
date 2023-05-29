@@ -24,3 +24,6 @@ class JBlimpTask(BlimpTask):
     DATASET_PATH = "polm-stability/jblimp"
     DATASET_NAME = None
 
+class JBlimp(JBlimpTask):
+    DATASET_NAME = "jblimp"
+
