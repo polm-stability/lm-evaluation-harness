@@ -27,3 +27,18 @@ class JBlimpTask(BlimpTask):
 class JBlimp(JBlimpTask):
     DATASET_NAME = "jblimp"
 
+    # NOTE: This is very confusing, but while BLiMP uses keys like `sentence_good`,
+    # JBLiMP uses keys like `good_sentence`.
+
+    def doc_to_decontamination_query(self, doc):
+        return doc["good_sentence"] + " " + doc["bad_sentence"]
+
+    def construct_requests(self, doc, ctx):
+        assert not ctx
+
+        # Calculate the loglikelihood for the good and the bad sentence.
+        # Note that loglikelihood translates the "" prefix to the "<|endoftext|>" token
+        return [
+            rf.loglikelihood("", doc["good_sentence"]),
+            rf.loglikelihood("", doc["bad_sentence"]),
+        ]
