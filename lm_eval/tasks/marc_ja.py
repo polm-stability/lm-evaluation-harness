@@ -8,6 +8,7 @@ JGLUE has been constructed from scratch without translation.
 Homepage: https://github.com/yahoojapan/JGLUE
 """
 from lm_eval.base import MultipleChoiceTask, rf
+import numpy as np
 
 _CITATION = """
 @inproceedings{kurihara-etal-2022-jglue,
