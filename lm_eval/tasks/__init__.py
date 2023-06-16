@@ -58,6 +58,7 @@ from . import jcommonsenseqa
 from . import jnli
 from . import marc_ja
 from . import jblimp
+from . import xwinograd
 
 
 ########################################
@@ -329,6 +330,7 @@ TASK_REGISTRY = {
     "marc_ja": marc_ja.MARCJaWithFintanPrompt,
     **marc_ja.construct_tasks(),
     "jblimp": jblimp.JBlimp,
+    "xwinograd": xwinograd.XWinograd,
 }
 
 
