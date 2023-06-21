@@ -4,6 +4,10 @@ https://aclanthology.org/2021.findings-acl.310/
 
 xwinograd is a collection of Winograd schema coreference and commonsense reasoning problems in multiple languages.
 """
+
+#XXX: This dataset is multilingual, but was added specifically for Japanese eval.
+# If there's interest it could easily be used in other scenarios.
+
 from lm_eval.base import rf, Task
 from lm_eval.metrics import mean
 import numpy as np
@@ -22,8 +26,6 @@ _CITATION = """
 class XWinograd(Task):
     VERSION = 1.0
     DATASET_PATH = "juletxara/xwinograd"
-    DATASET_NAME = "jp"
-    DESCRIPTION = "Winograd schema problems"
 
     # data samples have sentence1, sentence2, and answer keys.
     # answer is 1 or 2 (as strings).
@@ -82,3 +84,6 @@ class XWinograd(Task):
             "acc": mean,
         }
 
+
+class XWinogradJA(XWinograd):
+    DATASET_NAME = "jp"
