@@ -84,3 +84,17 @@ python main.py \
     --num_fewshot "0" \
     --output_path "result.json"
 ```
+
+## [AI王](https://sites.google.com/view/project-aio/home)
+
+AI王 is a quiz competition that has released datasets over three years.
+
+**sample script**
+```
+python main.py \
+    --model hf-causal \
+    --model_args $MODEL_ARGS \
+    --tasks "aiou" \
+    --num_fewshot "0" \
+    --output_path "result.json"
+```
