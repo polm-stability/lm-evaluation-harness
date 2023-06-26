@@ -21,13 +21,18 @@
     "jsquad-1.1-0.2": {
       "exact_match": 50.29266096352994,
       "f1": 61.107638748126
+    },
+    "xwinograd_ja": {
+      "acc": 0.708029197080292,
+      "acc_stderr": 0.014689686963716971
     }
   },
   "versions": {
     "jcommonsenseqa-1.1-0.2": 1.1,
     "jnli-1.1-0.2": 1.1,
     "jsquad-1.1-0.2": 1.1,
-    "marc_ja-1.1-0.2": 1.1
+    "marc_ja-1.1-0.2": 1.1,
+    "xwinograd_ja": 1.0
   },
   "config": {
     "model": "hf-causal",
@@ -36,7 +41,8 @@
       2,
       3,
       3,
-      3
+      3,
+      0
     ],
     "batch_size": null,
     "device": "cuda",
