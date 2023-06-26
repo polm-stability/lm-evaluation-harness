@@ -59,6 +59,7 @@ from .ja import jnli
 from .ja import marc_ja
 from .ja import jblimp
 from .ja import xwinograd
+from .ja import xlsum_ja
 ########################################
 # Translation tasks
 ########################################
@@ -329,6 +330,8 @@ TASK_REGISTRY = {
     **marc_ja.construct_tasks(),
     "jblimp": jblimp.JBlimp,
     "xwinograd_ja": xwinograd.XWinogradJA,
+    "xlsum_ja": xlsum_ja.XLSumJa,
+    **xlsum_ja.construct_tasks(),
 }
 
 

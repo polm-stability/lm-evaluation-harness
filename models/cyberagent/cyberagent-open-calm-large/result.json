@@ -22,9 +22,8 @@
       "exact_match": 37.23547951373255,
       "f1": 48.50349592141573
     },
-    "xwinograd_ja": {
-      "acc": 0.6152241918665277,
-      "acc_stderr": 0.015719467393137274
+    "xlsum_ja": {
+      "rouge2": 1.9854375467671679
     }
   },
   "versions": {
@@ -32,7 +31,7 @@
     "jnli-1.1-0.2": 1.1,
     "jsquad-1.1-0.2": 1.1,
     "marc_ja-1.1-0.2": 1.1,
-    "xwinograd_ja": 1.0
+    "xlsum_ja": 1.0
   },
   "config": {
     "model": "hf-causal",
@@ -42,7 +41,7 @@
       3,
       3,
       3,
-      0
+      1
     ],
     "batch_size": null,
     "device": "cuda",
