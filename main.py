@@ -46,14 +46,16 @@ def parse_args():
     return parser.parse_args()
 
 
-# Returns a list containing all values of the source_list that
-# match at least one of the patterns
-def pattern_match(patterns, source_list):
-    task_names = set()
+# Returns a dict containing the keys and values of the source_dict that
+# the key of which matchs at least one of the patterns
+def pattern_match(patterns, source_dict):
+    patterns = sort(patterns) # sorted by task name
+    source_list = list(source_dict.keys())
+    task_param_dict = dict()
     for pattern in patterns:
         for matching in fnmatch.filter(source_list, pattern):
-            task_names.add(matching)
-    return sorted(list(task_names))
+            task_param_dict.update({matching: source_dict[matching]})
+    return task_param_dict
 
 
 def main():
@@ -67,23 +69,31 @@ def main():
         )
 
     if args.tasks is None:
-        task_names = tasks.ALL_TASKS
+        _tasks = tasks.ALL_TASKS
     else:
-        task_names = pattern_match(args.tasks.split(","), tasks.ALL_TASKS)
+        _tasks = args.tasks.split(",")
 
-    print(f"Selected Tasks: {task_names}")
     if "," in args.num_fewshot:
-        num_fewshot = [int(n) for n in args.num_fewshot.split(",")]
+        _num_fewshot = [int(n) for n in args.num_fewshot.split(",")]
     else:
-        num_fewshot = int(args.num_fewshot)
+        _num_fewshot = [int(args.num_fewshot) for _ in _tasks]
     
     if args.limit is not None:
         if "," in args.limit:
-            limit = [int(n) if n.isdigit() else float(n) for n in args.limit.split(",")]
+            _limit = [int(n) if n.isdigit() else float(n) for n in args.limit.split(",")]
         else:
-            limit = int(args.limit)
+            _limit = [int(args.limit) for _ in _tasks]
     else:
-        limit = None
+        _limit = [None for _ in _tasks]
+
+    task_param_dict = {tup[0]: tup for tup in zip(_tasks, _num_fewshot, _limit)}
+    task_param_dict = pattern_match(tasks.ALL_TASKS, task_param_dict)
+
+    task_names = [tup[0] for tup in task_param_dict.values()]
+    num_fewshot = [tup[1] for tup in task_param_dict.values()]
+    limit = [tup[2] for tup in task_param_dict.values()]
+    print(f"Selected Tasks: {task_names}")
+
     description_dict = {}
     if args.description_dict_path:
         with open(args.description_dict_path, "r") as f:
