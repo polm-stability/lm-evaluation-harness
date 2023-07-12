@@ -151,6 +151,11 @@ class JSQuAD(Task):
                 predictions,
                 references,
             ),  # The F-score of predicted tokens versus the gold answer
+            "details": {
+                "id": doc["id"],
+                "prediction": continuation,
+                "answers": doc["answers"]
+            }
         }
 
 
