@@ -1,0 +1,8 @@
+fugashi==1.2.1
+unidic-lite==1.0.8
+emoji
+# This is temporary due to a Cython issue, and can be removed when the below PR
+# is released. It also only affects Python 3.11+.
+# https://github.com/ikegami-yukino/neologdn/pull/24
+neologdn @ git+https://github.com/ikegami-yukino/neologdn@dd713fa8dd10925ea72cd13e666ce005b20c339f
+
