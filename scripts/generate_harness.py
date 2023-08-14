@@ -60,7 +60,7 @@ def generate_harness(model_dir):
     args = conf["model"].get("args")
     model_args = f"pretrained={model_path}"
     if tokenizer:
-        model_arts += "," + f"tokenizer={tokenizer}"
+        model_args += "," + f"tokenizer={tokenizer}"
     if args:
         model_args += "," + args
 
