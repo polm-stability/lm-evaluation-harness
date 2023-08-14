@@ -8,6 +8,10 @@ A script to generate a harness shell script for running eval in a cluster.
 
 Given a model directory, this script looks for a `harness.conf` file. The file describes the path to the pretrained model (or the HuggingFace model name), the model arguments, the tasks to run, and other details.
 
+Example usage:
+
+    python scripts/generate_harness.py models/stablelm/stablelm-jp-3b-ja50_rp50-700b/
+
 Given these details the script outputs a command line which will run eval.
 
 In detail, a config has two kinds of sections: the `[model]` section contains general model options, while task-specific sections have names like `[tasks.MY_TASK-0.1]`.
@@ -30,6 +34,9 @@ Configs support inheritance. The file at `models/harness.conf` specifies global 
 
 def generate_harness(model_dir):
     path = Path(model_dir).absolute()
+    if path.is_file():
+        # if we specified a file for some reason, just take the dir
+        path = path.parent
 
     # grandparent is global config, parent is org config.
     # it's ok if they don't exist.
@@ -72,7 +79,7 @@ def generate_harness(model_dir):
     tasks = ",".join(tasks)
     fewshot = ",".join(fewshot)
 
-    output_path = model_path / "result.json"
+    output_path = path / "result.json"
     model_type = conf["model"]["model"]
     script = (
       "python main.py "
