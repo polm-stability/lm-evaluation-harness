@@ -1,3 +1,4 @@
+import os
 import sys
 import configparser
 from pathlib import Path
@@ -47,13 +48,19 @@ def generate_harness(model_dir):
     conf = configparser.ConfigParser(interpolation=interp)
     conf.read(config_paths)
 
-    # Make the model args. We don't have to interpolate the path here, it can
-    # be handled in the file directly thanks to interpolation.
-    model_path = Path(conf["model"]["path"])
-    tokenizer = conf["model"]["tokenizer"]
+    # Build the model args. We don't have to interpolate the path here, it can
+    # be handled in the file directly thanks to interpolation. Also, fall back
+    # to the last two parts of the directory path as the HF name.
+    fallback_path = os.path.join(*path.parts[-2:])
+
+    model_path = conf["model"].get("path", fallback_path)
+    # tokenizer is technically not required, but almost always present
+    tokenizer = conf["model"].get("tokenizer")
     # args are technically not required
     args = conf["model"].get("args")
-    model_args = f"pretrained={model_path},tokenizer={tokenizer}"
+    model_args = f"pretrained={model_path}"
+    if tokenizer:
+        model_arts += "," + f"tokenizer={tokenizer}"
     if args:
         model_args += "," + args
 
