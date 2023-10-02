@@ -151,7 +151,7 @@ class JSQuAD(Task):
             "id": doc["id"],
             "answers": doc["answers"],
         }
-        return {
+        out = {
             "exact_match": (
                 predictions,
                 references,
@@ -161,6 +161,16 @@ class JSQuAD(Task):
                 references,
             ),  # The F-score of predicted tokens versus the gold answer
         }
+
+        # add verbose output
+        out["details"] = {
+            "question": doc["question"],
+            "response": continuation,
+            "gold": doc["answers"]
+        }
+
+        return out
+
 
     def aggregation(self):
         return {
