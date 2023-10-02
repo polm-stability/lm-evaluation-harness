@@ -80,7 +80,7 @@ def pattern_match(patterns, source_list):
     return task_names
 
 
-def main(description_dict_path: str, output_path: str, eval_args: dict):
+def main(eval_args: dict, description_dict_path: str = None, output_path: str = None):
     description_dict = {}
     if description_dict_path:
         with open(description_dict_path, "r") as f:
@@ -96,11 +96,6 @@ def main(description_dict_path: str, output_path: str, eval_args: dict):
         with open(output_path, "w") as f:
             f.write(dumped)
 
-    print(
-        f"{eval_args['model']} ({eval_args['model_args']}), limit: {eval_args['limit']}, "
-        f"num_fewshot: {eval_args['num_fewshot']}, batch_size: {eval_args['batch_size']}"
-    )
-    print(evaluator.make_table(results))
 
 
 if __name__ == "__main__":
@@ -115,4 +110,10 @@ if __name__ == "__main__":
     output_path = args.get('output_path', None)
     args.pop('output_path', None)
 
-    main(description_dict_path, output_path, args)
+    main(args, description_dict_path, output_path)
+    
+    print(
+        f"{args['model']} ({args['model_args']}), limit: {args['limit']}, "
+        f"num_fewshot: {args['num_fewshot']}, batch_size: {args['batch_size']}"
+    )
+    print(evaluator.make_table(results))
