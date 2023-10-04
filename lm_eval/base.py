@@ -13,6 +13,7 @@ import torch
 import torch.nn.functional as F
 
 from lm_eval.metrics import mean, weighted_perplexity, weighted_mean, bits_per_byte
+from lm_eval.metrics import balanced_mean
 from lm_eval import utils
 from abc import abstractmethod
 
@@ -708,6 +709,35 @@ class MultipleChoiceTask(Task):
             "acc": mean,
             "acc_norm": mean,
         }
+
+class BalancedMultipleChoiceTask(MultipleChoiceTask):
+    def process_results(self, doc, results):
+        gold = doc["gold"]
+
+        acc = 1.0 if np.argmax(results) == gold else 0.0
+        completion_len = np.array([float(len(i)) for i in doc["choices"]])
+        acc_norm = 1.0 if np.argmax(results / completion_len) == gold else 0.0
+
+        return {
+            "acc": acc,
+            "acc_norm": acc_norm,
+            "balanced_acc": (acc, gold)
+        }
+
+    def higher_is_better(self):
+        return {
+            "acc": True,
+            "acc_norm": True,
+            "balanced_acc": True,
+        }
+
+    def aggregation(self):
+        return {
+            "acc": mean,
+            "acc_norm": mean,
+            "balanced_acc": balanced_mean,
+        }
+
 
 
 class PerplexityTask(Task, abc.ABC):

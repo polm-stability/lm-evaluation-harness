@@ -7,7 +7,7 @@ JGLUE has been constructed from scratch without translation.
 
 Homepage: https://github.com/yahoojapan/JGLUE
 """
-from lm_eval.base import MultipleChoiceTask, rf
+from lm_eval.base import BalancedMultipleChoiceTask, rf
 
 _CITATION = """
 @inproceedings{kurihara-etal-2022-jglue,
@@ -28,7 +28,7 @@ _CITATION = """
 
 
 
-class MARCJaWithFintanPrompt(MultipleChoiceTask):
+class MARCJaWithFintanPrompt(BalancedMultipleChoiceTask):
     """
     prompt template is taken from [ChatGPT vs BERT: どちらが日本語をより理解できるのか?](https://fintan.jp/page/9126/)
     """

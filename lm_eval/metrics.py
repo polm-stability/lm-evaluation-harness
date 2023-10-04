@@ -5,6 +5,7 @@ import numpy as np
 import sacrebleu
 import sklearn.metrics
 import random
+from collections import defaultdict
 
 
 def mean(arr):
@@ -27,6 +28,22 @@ def mean_stderr(arr):
 
 def median(arr):
     return arr[len(arr) // 2]
+
+
+def balanced_mean(arr):
+    # each entry is of the form (acc score, class label)
+    # first group the results
+    by_class = defaultdict(list)
+    for acc, label in arr:
+        by_class[label].append(acc)
+
+    # calculate class averages
+    avgs = []
+    for key, vals in by_class.items():
+        avgs.append(sum(vals) / len(vals))
+
+    # average the class values
+    return sum(avgs) / len(avgs)
 
 
 def matthews_corrcoef(items):
