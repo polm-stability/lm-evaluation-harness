@@ -13,6 +13,7 @@ import torch
 import torch.nn.functional as F
 
 from lm_eval.metrics import mean, weighted_perplexity, weighted_mean, bits_per_byte
+from lm_eval.metrics import balanced_mean, matthews_corrcoef, macro_f1
 from lm_eval import utils
 from abc import abstractmethod
 
@@ -708,6 +709,49 @@ class MultipleChoiceTask(Task):
             "acc": mean,
             "acc_norm": mean,
         }
+
+class BalancedMultipleChoiceTask(MultipleChoiceTask):
+    """A task where the choices are the same every time, and accuracy should be
+    calculated separately for each class.
+
+    Originally created for marc-ja, which is severely imbalanced, though also
+    useful with less weird datasets. Not suitable for datasets where the choices
+    change for every question.
+    """
+    def process_results(self, doc, results):
+        gold = doc["gold"]
+
+        pred = np.argmax(results)
+        acc = 1.0 if np.argmax(results) == gold else 0.0
+        completion_len = np.array([float(len(i)) for i in doc["choices"]])
+        acc_norm = 1.0 if np.argmax(results / completion_len) == gold else 0.0
+
+        return {
+            "acc": acc,
+            "acc_norm": acc_norm,
+            "balanced_acc": (acc, gold),
+            "mcc": (gold, pred),
+            "macro_f1": (gold, pred),
+        }
+
+    def higher_is_better(self):
+        return {
+            "acc": True,
+            "acc_norm": True,
+            "balanced_acc": True,
+            "mcc": True,
+            "macro_f1": True,
+        }
+
+    def aggregation(self):
+        return {
+            "acc": mean,
+            "acc_norm": mean,
+            "balanced_acc": balanced_mean,
+            "mcc": matthews_corrcoef,
+            "macro_f1": macro_f1,
+        }
+
 
 
 class PerplexityTask(Task, abc.ABC):
