@@ -44,6 +44,7 @@ class JNLIWithFintanPrompt(BalancedMultipleChoiceTask):
         + "- そのいずれでもない場合はneutralと出力\n\n"
     )
     CHOICES = ["entailment", "contradiction", "neutral"]
+    SEP = "\n"
 
     def has_training_docs(self):
         return True
@@ -85,6 +86,8 @@ class JNLIWithFintanPrompt(BalancedMultipleChoiceTask):
         lls = [
             rf.loglikelihood(ctx, "{}".format(choice))[0] for choice in doc["choices"]
         ]
+        # this is only used for error analysis
+        lls.append(rf.greedy_until(ctx, [self.SEP]))
         return lls
 
 
