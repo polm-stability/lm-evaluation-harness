@@ -719,6 +719,7 @@ class BalancedMultipleChoiceTask(MultipleChoiceTask):
     useful with less weird datasets. Not suitable for datasets where the choices
     change for every question.
     """
+
     def process_results(self, doc, results):
         gold = doc["gold"]
 
