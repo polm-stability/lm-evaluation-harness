@@ -44,19 +44,19 @@
         --output_path "result.json"
     ```
 
-4. Run! 
+4. Run!
    ```bash
    sh harness.sh
    ```
 
-We evaluated some open-sourced Japanese LMs. Pleasae refer to `harness.sh` inside `models` folder. 
+We evaluated some open-sourced Japanese LMs. Pleasae refer to `harness.sh` inside `models` folder.
 
 
 ## JP Tasks
 For more details, please see [docs/jptasks.md](https://github.com/Stability-AI/lm-evaluation-harness/blob/jp-stable/docs/jptasks.md).
 
 | Tasks | [Supported Prompt Templates](https://github.com/Stability-AI/lm-evaluation-harness/blob/jp-stable/docs/prompt_templates.md) |
-| :- | -: | 
+| :- | -: |
 | JSQuAD | 0.1 / 0.2 / 0.3 / 0.4 |
 | JCommonsenseQA |  0.1 / 0.2 / 0.3 / 0.4 |
 | JNLI | 0.2 / 0.3 / 0.4 |

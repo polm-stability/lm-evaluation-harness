@@ -13,7 +13,6 @@ from lm_eval.metrics import mean
 from lm_eval.utils import rouge2_mecab
 
 
-
 _CITATION = """
 @inproceedings{ladhak-etal-2020-wikilingua, title = "{W}iki{L}ingua: A New Benchmark Dataset for Cross-Lingual Abstractive Summarization", author = "Ladhak, Faisal and Durmus, Esin and Cardie, Claire and McKeown, Kathleen", booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2020", month = nov, year = "2020", address = "Online", publisher = "Association for Computational Linguistics", url = "https://aclanthology.org/2020.findings-emnlp.360", doi = "10.18653/v1/2020.findings-emnlp.360", pages = "4034--4048", abstract = "We introduce WikiLingua, a large-scale, multilingual dataset for the evaluation of cross-lingual abstractive summarization systems. We extract article and summary pairs in 18 languages from WikiHow, a high quality, collaborative resource of how-to guides on a diverse set of topics written by human authors. We create gold-standard article-summary alignments across languages by aligning the images that are used to describe each how-to step in an article. As a set of baselines for further studies, we evaluate the performance of existing cross-lingual abstractive summarization methods on our dataset. We further propose a method for direct cross-lingual summarization (i.e., without requiring translation at inference time) by leveraging synthetic data and Neural Machine Translation as a pre-training step. Our method significantly outperforms the baseline approaches, while being more cost efficient during inference.", }
 """
@@ -32,6 +31,7 @@ class Wikilingua(Task):
     def __init__(self):
         super().__init__()
         from . import MecabTokenizer
+
         self.tokenizer = MecabTokenizer()
 
     def has_training_docs(self):
@@ -58,11 +58,11 @@ class Wikilingua(Task):
     def doc_to_target(self, doc):
         target = doc["target"]
 
-        #XXX: consider fixing weird formatting. In the targets it seems
+        # XXX: consider fixing weird formatting. In the targets it seems
         # inconsistent whether sentences are separated with "。 " or "\u3000 "
         # (\u3000 = full width space)
 
-        #target = doc["target"].replace(" \u3000", "\u3000").replace("\u3000 ", "。")
+        # target = doc["target"].replace(" \u3000", "\u3000").replace("\u3000 ", "。")
         return target
 
     def construct_requests(self, doc, ctx):
@@ -93,9 +93,7 @@ class Wikilingua(Task):
 
         ref = doc["source"]
 
-        return {
-            "rouge2": (completion, ref)
-        }
+        return {"rouge2": (completion, ref)}
 
     def _rouge(self, item):
         predictions, references = zip(*item)
@@ -112,10 +110,12 @@ class Wikilingua(Task):
             "rouge2": True,
         }
 
+
 class WikilinguaWithJAAlpacaPrompt(Wikilingua):
     PROMPT_VERSION = 0.3
     DESCRIPTION = "以下は、タスクを説明する指示と、文脈のある入力の組み合わせです。要求を適切に満たす応答を書きなさい。\n\n"
     INSTRUCTION = "与えられたニュース記事を要約してください。"
+
     def doc_to_text(self, doc):
         """
         以下は、タスクを説明する指示と、文脈のある入力の組み合わせです。要求を適切に満たす応答を書きなさい。
@@ -138,6 +138,7 @@ class WikilinguaWithRinnaInstructionSFT(Wikilingua):
     Reference:
     - HF Hub: https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft
     """
+
     PROMPT_VERSION = 0.4
     DESCRIPTION = "ユーザー: 与えられたニュース記事を要約してください。<NL>システム: 分かりました。<NL>"
     SEP = "<NL>"
@@ -148,7 +149,13 @@ class WikilinguaWithRinnaInstructionSFT(Wikilingua):
         return f"ユーザー: {input_text}{self.SEP}システム: "
 
     def preprocess_ctx(self, ctx, max_length):
-        return super().preprocess_ctx(ctx, max_length, ctx_prompt=f"{self.SEP}ユーザー: ", summary_prompt=f"{self.SEP}システム: ")
+        return super().preprocess_ctx(
+            ctx,
+            max_length,
+            ctx_prompt=f"{self.SEP}ユーザー: ",
+            summary_prompt=f"{self.SEP}システム: ",
+        )
+
 
 class WikilinguaWithRinnaBilingualInstructionSFT(WikilinguaWithRinnaInstructionSFT):
     PROMPT_VERSION = 0.5
@@ -164,8 +171,11 @@ VERSIONS = [
     WikilinguaWithRinnaBilingualInstructionSFT,
 ]
 
+
 def construct_tasks():
     tasks = {}
     for version_class in VERSIONS:
-        tasks[f"wikilingua_ja-{version_class.VERSION}-{version_class.PROMPT_VERSION}"] = version_class
+        tasks[
+            f"wikilingua_ja-{version_class.VERSION}-{version_class.PROMPT_VERSION}"
+        ] = version_class
     return tasks

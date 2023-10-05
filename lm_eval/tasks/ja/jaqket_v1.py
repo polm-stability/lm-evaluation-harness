@@ -25,10 +25,12 @@ _CITATION = """
 DYNAMIC_MAX_LENGTH = os.getenv("DYNAMIC_MAX_LENGTH", "true").lower()
 TOP_K_LIMIT = 5
 
+
 class JAQKETV1(MultipleChoiceTask):
     """
     prompt format was inspired by [日本語に特化した60億パラメータ規模のGPTモデルの構築と評価](https://www.anlp.jp/proceedings/annual_meeting/2023/pdf_dir/H9-4.pdf)
     """
+
     VERSION = 0.1
     PROMPT_VERSION = 0.1
     DATASET_PATH = "kumapo/JAQKET"
@@ -41,38 +43,38 @@ class JAQKETV1(MultipleChoiceTask):
     FEWSHOT_SEP = "\n\n"
 
     def download(self, data_dir=None, cache_dir=None, download_mode=None):
-         """Downloads and returns the task dataset.
-         Override this method to download the dataset from a custom API.
+        """Downloads and returns the task dataset.
+        Override this method to download the dataset from a custom API.
 
-         :param data_dir: str
-             Stores the path to a local folder containing the `Task`'s data files.
-             Use this to specify the path to manually downloaded data (usually when
-             the dataset is not publicly accessible).
-         :param cache_dir: str
-             The directory to read/write the `Task` dataset. This follows the
-             HuggingFace `datasets` API with the default cache directory located at:
-                 `~/.cache/huggingface/datasets`
-             NOTE: You can change the cache location globally for a given process
-             by setting the shell environment variable, `HF_DATASETS_CACHE`,
-             to another directory:
-                 `export HF_DATASETS_CACHE="/path/to/another/directory"`
-         :param download_mode: datasets.DownloadMode
-             How to treat pre-existing `Task` downloads and data.
-             - `datasets.DownloadMode.REUSE_DATASET_IF_EXISTS`
-                 Reuse download and reuse dataset.
-             - `datasets.DownloadMode.REUSE_CACHE_IF_EXISTS`
-                 Reuse download with fresh dataset.
-             - `datasets.DownloadMode.FORCE_REDOWNLOAD`
-                 Fresh download and fresh dataset.
-         """
-         self.dataset = datasets.load_dataset(
-             path=self.DATASET_PATH,
-             name=self.DATASET_NAME,
-             data_dir=data_dir,
-             cache_dir=cache_dir,
-             download_mode=download_mode,
-             num_contexts=TOP_K_LIMIT
-         )
+        :param data_dir: str
+            Stores the path to a local folder containing the `Task`'s data files.
+            Use this to specify the path to manually downloaded data (usually when
+            the dataset is not publicly accessible).
+        :param cache_dir: str
+            The directory to read/write the `Task` dataset. This follows the
+            HuggingFace `datasets` API with the default cache directory located at:
+                `~/.cache/huggingface/datasets`
+            NOTE: You can change the cache location globally for a given process
+            by setting the shell environment variable, `HF_DATASETS_CACHE`,
+            to another directory:
+                `export HF_DATASETS_CACHE="/path/to/another/directory"`
+        :param download_mode: datasets.DownloadMode
+            How to treat pre-existing `Task` downloads and data.
+            - `datasets.DownloadMode.REUSE_DATASET_IF_EXISTS`
+                Reuse download and reuse dataset.
+            - `datasets.DownloadMode.REUSE_CACHE_IF_EXISTS`
+                Reuse download with fresh dataset.
+            - `datasets.DownloadMode.FORCE_REDOWNLOAD`
+                Fresh download and fresh dataset.
+        """
+        self.dataset = datasets.load_dataset(
+            path=self.DATASET_PATH,
+            name=self.DATASET_NAME,
+            data_dir=data_dir,
+            cache_dir=cache_dir,
+            download_mode=download_mode,
+            num_contexts=TOP_K_LIMIT,
+        )
 
     def has_training_docs(self):
         return True
@@ -113,8 +115,7 @@ class JAQKETV1(MultipleChoiceTask):
 
         batch_encoded = encode_fn(batch_text, **encode_params)
         batch_input_ids = [
-            input_ids[:token_limit]
-            for input_ids in batch_encoded["input_ids"]
+            input_ids[:token_limit] for input_ids in batch_encoded["input_ids"]
         ]
         decode_fn = self.tokenizer.batch_decode
         if "skip_special_tokens" in inspect.getfullargspec(decode_fn).args:
@@ -131,9 +132,7 @@ class JAQKETV1(MultipleChoiceTask):
         [答え]:
         """
         return (
-            f"[質問]:{doc['goal']}\n" + 
-            f"[選択肢]:[{', '.join(doc['choices'])}]\n"
-            "[答え]:"
+            f"[質問]:{doc['goal']}\n" + f"[選択肢]:[{', '.join(doc['choices'])}]\n" "[答え]:"
         )
 
     def doc_to_text(self, doc):
@@ -141,48 +140,39 @@ class JAQKETV1(MultipleChoiceTask):
             context
             for context in self.batch_truncate_text(doc["contexts"], self.CONTEXT_LIMIT)
         ]
-        answer_context = "\n".join([
-            (
-                f"[題名]:{choice}\n" +
-                f"[問題]:{context}"
-            )
-            for choice, context in zip(doc["choices"], truncated_contexts)
-        ])
-        qa_prompt = self.doc_to_qa_prompt(doc)
-        return (
-            answer_context + 
-            "\n" + 
-            qa_prompt
+        answer_context = "\n".join(
+            [
+                (f"[題名]:{choice}\n" + f"[問題]:{context}")
+                for choice, context in zip(doc["choices"], truncated_contexts)
+            ]
         )
+        qa_prompt = self.doc_to_qa_prompt(doc)
+        return answer_context + "\n" + qa_prompt
 
     def doc_to_answering_text(self, doc):
         choices_and_contexts = []
         for choice, context in zip(doc["choices"], doc["contexts"]):
             if doc["gold"] == choice:
                 # need gold choice
-                choices_and_contexts.append((choice,context))
+                choices_and_contexts.append((choice, context))
             elif len(choices_and_contexts) < 2:
                 # and wrong choice
-                choices_and_contexts.append((choice,context))
+                choices_and_contexts.append((choice, context))
             if 1 < len(choices_and_contexts):
                 # 1 gold and 1 wrong are enough
                 break
         doc["choices"] = [tup[0] for tup in choices_and_contexts]
-        doc["contexts"] = self.batch_truncate_text([
-            tup[1] for tup in choices_and_contexts
-        ], self.ANSWERING_CONTEXT_LIMIT)
-        answer_context = "\n".join([
-            (
-                f"[題名]:{choice}\n" +
-                f"[問題]:{context}"
-            )
-            for choice, context in zip(doc["choices"], doc["contexts"])])
-        qa_prompt = self.doc_to_qa_prompt(doc)
-        return (
-            answer_context + 
-            "\n" + 
-            qa_prompt
+        doc["contexts"] = self.batch_truncate_text(
+            [tup[1] for tup in choices_and_contexts], self.ANSWERING_CONTEXT_LIMIT
         )
+        answer_context = "\n".join(
+            [
+                (f"[題名]:{choice}\n" + f"[問題]:{context}")
+                for choice, context in zip(doc["choices"], doc["contexts"])
+            ]
+        )
+        qa_prompt = self.doc_to_qa_prompt(doc)
+        return answer_context + "\n" + qa_prompt
 
     def doc_to_target(self, doc):
         return doc["choices"][doc["gold"]]
@@ -225,9 +215,9 @@ class JAQKETV1(MultipleChoiceTask):
             FEWSHOT_SEP = self.FEWSHOT_SEP
         elif hasattr(self, "SEP"):
             FEWSHOT_SEP = f"{self.SEP}{self.SEP}"
-        else:        
+        else:
             FEWSHOT_SEP = "\n\n"
-            
+
         if description:
             description += FEWSHOT_SEP
         elif hasattr(self, "DESCRIPTION"):
@@ -278,13 +268,17 @@ class JAQKETV1(MultipleChoiceTask):
 
         # if there is no example and still the prompt is too long, fail
         if len(ctxs) < 2:
-            raise ValueError(f"0-shot description+example doesn't fit in max length. ctx: {ctx}")
+            raise ValueError(
+                f"0-shot description+example doesn't fit in max length. ctx: {ctx}"
+            )
 
         # delete the first example, last is questioning example
         del ctxs[0]
 
         # recurse
-        return self.preprocess_ctx(self.FEWSHOT_SEP.join([description, *ctxs]), max_length)
+        return self.preprocess_ctx(
+            self.FEWSHOT_SEP.join([description, *ctxs]), max_length
+        )
 
     def construct_requests(self, doc, ctx):
         if DYNAMIC_MAX_LENGTH == "false" or not hasattr(self.tokenizer, "encode"):
@@ -298,11 +292,10 @@ class JAQKETV1(MultipleChoiceTask):
                 encode_params = dict(add_special_tokens=False)
             else:
                 encode_params = {}
-            max_num_tokens = max([
-                len(encode_fn(choice, **encode_params))
-                for choice in doc["choices"]
-            ])
-            ctx = self.preprocess_ctx(ctx, max_length=self.max_length-max_num_tokens)
+            max_num_tokens = max(
+                [len(encode_fn(choice, **encode_params)) for choice in doc["choices"]]
+            )
+            ctx = self.preprocess_ctx(ctx, max_length=self.max_length - max_num_tokens)
             lls = [
                 rf.loglikelihood(ctx, " {}".format(choice))[0]
                 for choice in doc["choices"]
@@ -333,13 +326,17 @@ class JAQKETV1(MultipleChoiceTask):
             }
         return out
 
+
 class JAQKETV1WithFintanPrompt(JAQKETV1):
     """
     prompt template was inspired by [ChatGPT vs BERT: どちらが日本語をより理解できるのか?](https://fintan.jp/page/9126/)
     """
+
     VERSION = 0.1
     PROMPT_VERSION = 0.2
-    DESCRIPTION = "文章と質問と回答の選択肢を入力として受け取り、選択肢から質問に対する回答を選択してください。なお、回答は選択肢の番号(例:0)でするものとします。 \n\n"
+    DESCRIPTION = (
+        "文章と質問と回答の選択肢を入力として受け取り、選択肢から質問に対する回答を選択してください。なお、回答は選択肢の番号(例:0)でするものとします。 \n\n"
+    )
 
     def doc_to_qa_prompt(self, doc):
         """
@@ -347,25 +344,23 @@ class JAQKETV1WithFintanPrompt(JAQKETV1):
         選択肢:0.choice0,1.choice1, ...,4.choice4
         回答:
         """
-        choices = ",".join([f"{idx}.{choice}" for idx, choice in enumerate(doc['choices'])])
-        return (
-            f"質問:{doc['goal']}\n"
-            f"選択肢:{choices}\n"
-            "回答:"
+        choices = ",".join(
+            [f"{idx}.{choice}" for idx, choice in enumerate(doc["choices"])]
         )
+        return f"質問:{doc['goal']}\n" f"選択肢:{choices}\n" "回答:"
 
     def doc_to_text(self, doc):
-        combined_context = "\n".join([
-            context
-            for context in self.batch_truncate_text(doc["contexts"], self.CONTEXT_LIMIT)
-        ])
+        combined_context = "\n".join(
+            [
+                context
+                for context in self.batch_truncate_text(
+                    doc["contexts"], self.CONTEXT_LIMIT
+                )
+            ]
+        )
         answer_context = f"文章:{combined_context}"
         qa_prompt = self.doc_to_qa_prompt(doc)
-        text = (
-            answer_context + 
-            "\n" + 
-            qa_prompt
-        )
+        text = answer_context + "\n" + qa_prompt
         return text
 
     def doc_to_answering_text(self, doc):
@@ -373,38 +368,39 @@ class JAQKETV1WithFintanPrompt(JAQKETV1):
         for choice, context in zip(doc["choices"], doc["contexts"]):
             if doc["gold"] == choice:
                 # need gold choice
-                choices_and_contexts.append((choice,context))
+                choices_and_contexts.append((choice, context))
             elif len(choices_and_contexts) < 2:
                 # and wrong choice
-                choices_and_contexts.append((choice,context))
+                choices_and_contexts.append((choice, context))
             if 1 < len(choices_and_contexts):
                 # 1 gold and 1 wrong are enough
                 break
         doc["choices"] = [tup[0] for tup in choices_and_contexts]
         doc["contexts"] = [tup[1] for tup in choices_and_contexts]
-        combined_context = "\n".join([
-            context
-            for context in self.batch_truncate_text(doc["contexts"], self.ANSWERING_CONTEXT_LIMIT)
-        ])
+        combined_context = "\n".join(
+            [
+                context
+                for context in self.batch_truncate_text(
+                    doc["contexts"], self.ANSWERING_CONTEXT_LIMIT
+                )
+            ]
+        )
         answer_context = f"文章:{combined_context}"
         qa_prompt = self.doc_to_qa_prompt(doc)
-        text = (
-            answer_context + 
-            "\n" + 
-            qa_prompt
-        )
+        text = answer_context + "\n" + qa_prompt
         return text
-    
+
     def doc_to_target(self, doc):
         return f"{doc['gold']}"
-    
+
+
 class JAQKETV1WithJAAlpacaPrompt(JAQKETV1):
     """
-    This prompt format was inspired by the below data in fujiki/japanese_alpaca_data. 
+    This prompt format was inspired by the below data in fujiki/japanese_alpaca_data.
     ```
     {
-        'instruction': 'この課題では、以下の選択肢から文の出典を特定する必要があります。\n\n出力は以下から選択してください：\n- 新聞\n- 教科書\n- オンライン記事\n- 百科事典', 
-        'input': '彼はローマの政治家であり哲学者であり、史上最も偉大な軍事指導者の一人と考えられています。', 
+        'instruction': 'この課題では、以下の選択肢から文の出典を特定する必要があります。\n\n出力は以下から選択してください：\n- 新聞\n- 教科書\n- オンライン記事\n- 百科事典',
+        'input': '彼はローマの政治家であり哲学者であり、史上最も偉大な軍事指導者の一人と考えられています。',
         'output': '百科事典'
     }
     ```
@@ -412,6 +408,7 @@ class JAQKETV1WithJAAlpacaPrompt(JAQKETV1):
     - data: https://huggingface.co/datasets/fujiki/japanese_alpaca_data
     - code: https://github.com/Stability-AI/gpt-neox/blob/c130a4edc1120dccec8f02a34eb60d3e8f484cd3/finetune/finetune_base_ja.py#LL118C23-L127C11
     """
+
     VERSION = 0.1
     PROMPT_VERSION = 0.3
     DESCRIPTION = "以下は、タスクを説明する指示と、文脈のある入力の組み合わせです。要求を適切に満たす応答を書きなさい。\n\n"
@@ -424,26 +421,28 @@ class JAQKETV1WithJAAlpacaPrompt(JAQKETV1):
         """
         以下は、タスクを説明する指示と、文脈のある入力の組み合わせです。要求を適切に満たす応答を書きなさい。
 
-        ### 指示: 
+        ### 指示:
         {instruction}
 
-        ### 入力: 
+        ### 入力:
         {input}
 
-        ### 応答: 
+        ### 応答:
         {response}
         """
-        choices = "\n".join([f"- {choice}" for choice in doc['choices']])
+        choices = "\n".join([f"- {choice}" for choice in doc["choices"]])
         instruction_text = self.INSTRUCTION + f"出力は以下から選択してください：\n{choices}"
-        combined_context = "\n".join([
-            context
-            for context in self.batch_truncate_text(doc["contexts"], self.CONTEXT_LIMIT)
-        ])
+        combined_context = "\n".join(
+            [
+                context
+                for context in self.batch_truncate_text(
+                    doc["contexts"], self.CONTEXT_LIMIT
+                )
+            ]
+        )
         input_text = f"文脈：{combined_context}\n質問：{doc['goal']}"
         return (
-            f"### 指示:\n{instruction_text}\n\n"
-            f"### 入力:\n{input_text}\n\n"
-            f"### 応答:\n"
+            f"### 指示:\n{instruction_text}\n\n" f"### 入力:\n{input_text}\n\n" f"### 応答:\n"
         )
 
     def doc_to_answering_text(self, doc):
@@ -451,33 +450,37 @@ class JAQKETV1WithJAAlpacaPrompt(JAQKETV1):
         for choice, context in zip(doc["choices"], doc["contexts"]):
             if doc["gold"] == choice:
                 # need gold choice
-                choices_and_contexts.append((choice,context))
+                choices_and_contexts.append((choice, context))
             elif len(choices_and_contexts) < 2:
                 # and wrong choice
-                choices_and_contexts.append((choice,context))
+                choices_and_contexts.append((choice, context))
             if 1 < len(choices_and_contexts):
                 # 1 gold and 1 wrong are enough
                 break
         doc["choices"] = [tup[0] for tup in choices_and_contexts]
         doc["contexts"] = [tup[1] for tup in choices_and_contexts]
-        choices = "\n".join([f"- {choice}" for choice in doc['choices']])
+        choices = "\n".join([f"- {choice}" for choice in doc["choices"]])
         instruction_text = self.INSTRUCTION + f"出力は以下から選択してください：\n{choices}"
-        combined_context = "\n".join([
-            context
-            for context in self.batch_truncate_text(doc["contexts"], self.ANSWERING_CONTEXT_LIMIT)
-        ])
+        combined_context = "\n".join(
+            [
+                context
+                for context in self.batch_truncate_text(
+                    doc["contexts"], self.ANSWERING_CONTEXT_LIMIT
+                )
+            ]
+        )
         input_text = f"文脈：{combined_context}\n質問：{doc['goal']}"
         return (
-            f"### 指示:\n{instruction_text}\n\n"
-            f"### 入力:\n{input_text}\n\n"
-            f"### 応答:\n"
+            f"### 指示:\n{instruction_text}\n\n" f"### 入力:\n{input_text}\n\n" f"### 応答:\n"
         )
+
 
 class JAQKETV1WithRinnaInstructionSFT(JAQKETV1):
     """
     Reference:
     - HF Hub: https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft
     """
+
     VERSION = 0.1
     PROMPT_VERSION = 0.4
     DESCRIPTION = "ユーザー: 与えられた文脈と選択肢から、質問に対する答えを選択肢の中から選んでください。<NL>システム: 分かりました。<NL>"
@@ -490,12 +493,19 @@ class JAQKETV1WithRinnaInstructionSFT(JAQKETV1):
         raise NotImplementedError()
 
     def doc_to_text(self, doc):
-        choices = self.SEP.join([f"- {choice}" for choice in doc['choices']])
-        combined_context = self.SEP.join([
-            context
-            for context in self.batch_truncate_text(doc["contexts"], self.CONTEXT_LIMIT)
-        ])
-        input_text = f"文脈：{combined_context}{self.SEP}質問：{doc['goal']}{self.SEP}" + f"選択肢：{self.SEP}{choices}"
+        choices = self.SEP.join([f"- {choice}" for choice in doc["choices"]])
+        combined_context = self.SEP.join(
+            [
+                context
+                for context in self.batch_truncate_text(
+                    doc["contexts"], self.CONTEXT_LIMIT
+                )
+            ]
+        )
+        input_text = (
+            f"文脈：{combined_context}{self.SEP}質問：{doc['goal']}{self.SEP}"
+            + f"選択肢：{self.SEP}{choices}"
+        )
         return f"ユーザー: {input_text}{self.SEP}システム: "
 
     def doc_to_answering_text(self, doc):
@@ -503,21 +513,28 @@ class JAQKETV1WithRinnaInstructionSFT(JAQKETV1):
         for choice, context in zip(doc["choices"], doc["contexts"]):
             if doc["gold"] == choice:
                 # need gold choice
-                choices_and_contexts.append((choice,context))
+                choices_and_contexts.append((choice, context))
             elif len(choices_and_contexts) < 2:
                 # and wrong choice
-                choices_and_contexts.append((choice,context))
+                choices_and_contexts.append((choice, context))
             if 1 < len(choices_and_contexts):
                 # 1 gold and 1 wrong are enough
                 break
         doc["choices"] = [tup[0] for tup in choices_and_contexts]
         doc["contexts"] = [tup[1] for tup in choices_and_contexts]
-        choices = self.SEP.join([f"- {choice}" for choice in doc['choices']])
-        combined_context = self.SEP.join([
-            context
-            for context in self.batch_truncate_text(doc["contexts"], self.ANSWERING_CONTEXT_LIMIT)
-        ])
-        input_text = f"文脈：{combined_context}{self.SEP}質問：{doc['goal']}{self.SEP}" + f"選択肢：{self.SEP}{choices}"
+        choices = self.SEP.join([f"- {choice}" for choice in doc["choices"]])
+        combined_context = self.SEP.join(
+            [
+                context
+                for context in self.batch_truncate_text(
+                    doc["contexts"], self.ANSWERING_CONTEXT_LIMIT
+                )
+            ]
+        )
+        input_text = (
+            f"文脈：{combined_context}{self.SEP}質問：{doc['goal']}{self.SEP}"
+            + f"選択肢：{self.SEP}{choices}"
+        )
         return f"ユーザー: {input_text}{self.SEP}システム: "
 
     def preprocess_ctx(self, ctx, max_length):
@@ -531,12 +548,16 @@ class JAQKETV1WithRinnaInstructionSFT(JAQKETV1):
 
         # if there is no example and still the prompt is too long, fail
         if len(ctxs) < 2:
-            raise ValueError(f"0-shot description+example doesn't fit in max length. ctx: {ctx}")
+            raise ValueError(
+                f"0-shot description+example doesn't fit in max length. ctx: {ctx}"
+            )
 
         # delete the first example, last is questioning example
         del ctxs[1]
 
-        new_ctx = self.END_OF_DESCRIPTION.join([description, self.START_OF_FEWSHOT.join(ctxs)])
+        new_ctx = self.END_OF_DESCRIPTION.join(
+            [description, self.START_OF_FEWSHOT.join(ctxs)]
+        )
         # recurse
         return self.preprocess_ctx(new_ctx, max_length)
 
@@ -552,5 +573,7 @@ VERSIONS = [
 def construct_tasks():
     tasks = {}
     for version_class in VERSIONS:
-        tasks[f"jaqket_v1-{version_class.VERSION}-{version_class.PROMPT_VERSION}"] = version_class
+        tasks[
+            f"jaqket_v1-{version_class.VERSION}-{version_class.PROMPT_VERSION}"
+        ] = version_class
     return tasks

@@ -2,9 +2,9 @@
 XL-Sum: Large-Scale Multilingual Abstractive Summarization for 44 Languages
 https://aclanthology.org/2021.findings-acl.413/
 
-We present XLSum, a comprehensive and diverse dataset comprising 1.35 million professionally annotated article-summary pairs from BBC, extracted using a set of carefully designed heuristics. 
-The dataset covers 45 languages ranging from low to high-resource, for many of which no public dataset is currently available. 
-XL-Sum is highly abstractive, concise, and of high quality, as indicated by human and intrinsic evaluation. 
+We present XLSum, a comprehensive and diverse dataset comprising 1.35 million professionally annotated article-summary pairs from BBC, extracted using a set of carefully designed heuristics.
+The dataset covers 45 languages ranging from low to high-resource, for many of which no public dataset is currently available.
+XL-Sum is highly abstractive, concise, and of high quality, as indicated by human and intrinsic evaluation.
 
 Homepage: https://github.com/csebuetnlp/xl-sum
 """
@@ -41,10 +41,11 @@ DYNAMIC_MAX_LENGTH = os.getenv("DYNAMIC_MAX_LENGTH", "true").lower()
 
 
 class XLSumJa(Task):
-    """ 
-    - Use ROUGE-2 as [PaLM 2](https://ai.google/static/documents/palm2techreport.pdf)
-    - Use Mecab tokenizer for Japanese eval 
     """
+    - Use ROUGE-2 as [PaLM 2](https://ai.google/static/documents/palm2techreport.pdf)
+    - Use Mecab tokenizer for Japanese eval
+    """
+
     VERSION = 1.0
     # this prompt was made by mkshing
     PROMPT_VERSION = 0.0
@@ -52,11 +53,12 @@ class XLSumJa(Task):
     DATASET_NAME = None
     DESCRIPTION = "与えられたニュース記事を要約してください。\n\n"
     LOAD_TOKENIZER = True
-    SEP="\n"
+    SEP = "\n"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         from . import MecabTokenizer
+
         self.tokenizer = MecabTokenizer()
 
     def has_training_docs(self):
@@ -67,13 +69,13 @@ class XLSumJa(Task):
 
     def has_test_docs(self):
         return True
-    
+
     def training_docs(self):
         return self.dataset["train"]
 
     def validation_docs(self):
         return self.dataset["validation"]
-    
+
     def test_docs(self):
         return self.dataset["test"]
 
@@ -83,11 +85,13 @@ class XLSumJa(Task):
     def doc_to_target(self, doc):
         return doc["summary"]
 
-    def preprocess_ctx(self, ctx, max_length, ctx_prompt="ニュース記事:", summary_prompt="要約:"):
+    def preprocess_ctx(
+        self, ctx, max_length, ctx_prompt="ニュース記事:", summary_prompt="要約:"
+    ):
         if len(self._tokenize(ctx)) <= max_length:
             return ctx
-        # if the inputs too long, truncate inputs 
-        ctxs = [f"{ctx_prompt}{c}"for c in ctx.split(ctx_prompt)]
+        # if the inputs too long, truncate inputs
+        ctxs = [f"{ctx_prompt}{c}" for c in ctx.split(ctx_prompt)]
         description = ""
         if summary_prompt not in ctxs[0]:
             description = ctxs[0].replace(ctx_prompt, "")
@@ -103,19 +107,21 @@ class XLSumJa(Task):
                 tmp = add_sentences + [s]
                 if len(self._tokenize(text="。".join(tmp))) > max_length_per_shot:
                     if len(add_sentences) > 0:
-                        add_sentences[-1] += "。"+self.SEP
+                        add_sentences[-1] += "。" + self.SEP
                     else:
                         # I believe this case does't happen. But, let's make sure to avoid IndexError
                         # In this case, just truncate the first sentence
                         token_ids = self._tokenize(s)[:max_length_per_shot]
-                        truncated_s = self.tokenizer.decode(token_ids, skip_special_tokens=True)
-                        add_sentences.append(truncated_s+self.SEP)
+                        truncated_s = self.tokenizer.decode(
+                            token_ids, skip_special_tokens=True
+                        )
+                        add_sentences.append(truncated_s + self.SEP)
                     break
                 add_sentences.append(s)
             c_res += "。".join(add_sentences)
             res += f"{c_res}{summary_prompt}{summary}"
         return res
-    
+
     def _tokenize(self, text, **kwargs):
         encode_fn = self.tokenizer.encode
         if "add_special_tokens" in inspect.getfullargspec(encode_fn).args:
@@ -130,7 +136,7 @@ class XLSumJa(Task):
         else:
             # length + some buffers (10)
             max_num_tokens = len(self._tokenize(doc["summary"])) + 10
-        ctx = self.preprocess_ctx(ctx, max_length=self.max_length-max_num_tokens)
+        ctx = self.preprocess_ctx(ctx, max_length=self.max_length - max_num_tokens)
         continuation = rf.greedy_until(ctx, [self.SEP], max_num_tokens)
         return continuation
 
@@ -149,20 +155,18 @@ class XLSumJa(Task):
             # consistency
             "question": doc["text"],
             "response": continuation,
-            "gold": doc["summary"]
+            "gold": doc["summary"],
         }
         return out
-    
+
     def aggregation(self):
-        return {
-            "rouge2": self._rouge
-        }
+        return {"rouge2": self._rouge}
 
     def higher_is_better(self):
         return {
             "rouge2": True,
         }
-    
+
     def _rouge(self, item):
         predictions, references = zip(*item)
         res = rouge2_mecab(refs=references, preds=predictions, tokenizer=self.tokenizer)
@@ -173,24 +177,30 @@ class XLSumJaWithJAAlpacaPrompt(XLSumJa):
     PROMPT_VERSION = 0.3
     DESCRIPTION = "以下は、タスクを説明する指示と、文脈のある入力の組み合わせです。要求を適切に満たす応答を書きなさい。\n\n"
     INSTRUCTION = "与えられたニュース記事を要約してください。"
+
     def doc_to_text(self, doc):
         """
         以下は、タスクを説明する指示と、文脈のある入力の組み合わせです。要求を適切に満たす応答を書きなさい。
 
-        ### 指示: 
+        ### 指示:
         {instruction}
 
-        ### 入力: 
+        ### 入力:
         {input}
 
-        ### 応答: 
+        ### 応答:
         {response}
         """
         input_text = f"ニュース記事:{doc['text']}"
         return f"### 指示:\n{self.INSTRUCTION}\n\n### 入力:\n{input_text}\n\n### 応答:\n"
 
     def preprocess_ctx(self, ctx, max_length):
-        return super().preprocess_ctx(ctx, max_length, ctx_prompt=f"### 指示:\n{self.INSTRUCTION}\n\n### 入力:\n", summary_prompt="### 応答:\n")
+        return super().preprocess_ctx(
+            ctx,
+            max_length,
+            ctx_prompt=f"### 指示:\n{self.INSTRUCTION}\n\n### 入力:\n",
+            summary_prompt="### 応答:\n",
+        )
 
 
 class XLSumJaWithRinnaInstructionSFT(XLSumJa):
@@ -198,6 +208,7 @@ class XLSumJaWithRinnaInstructionSFT(XLSumJa):
     Reference:
     - HF Hub: https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft
     """
+
     PROMPT_VERSION = 0.4
     DESCRIPTION = "ユーザー: 与えられたニュース記事を要約してください。<NL>システム: 分かりました。<NL>"
     SEP = "<NL>"
@@ -206,17 +217,21 @@ class XLSumJaWithRinnaInstructionSFT(XLSumJa):
     def doc_to_text(self, doc):
         input_text = f"ニュース記事:{doc['text']}"
         return f"ユーザー: {input_text}{self.SEP}システム: "
-    
+
     def preprocess_ctx(self, ctx, max_length):
-        ctx = super().preprocess_ctx(ctx, max_length, ctx_prompt=f"ユーザー: ", summary_prompt=f"{self.SEP}システム: ")
+        ctx = super().preprocess_ctx(
+            ctx, max_length, ctx_prompt=f"ユーザー: ", summary_prompt=f"{self.SEP}システム: "
+        )
         ctx = ctx.replace("<NL><NL>", "<NL>")
         return ctx
-    
+
+
 class XLSumJaWithRinnaBilingualInstructionSFT(XLSumJaWithRinnaInstructionSFT):
     """
     Reference:
     - HF Hub: https://huggingface.co/rinna/bilingual-gpt-neox-4b-instruction-sft
     """
+
     PROMPT_VERSION = 0.5
     DESCRIPTION = "ユーザー: 与えられたニュース記事を要約してください。\nシステム: 分かりました。\n"
     SEP = "\n"
@@ -234,5 +249,7 @@ VERSIONS = [
 def construct_tasks():
     tasks = {}
     for version_class in VERSIONS:
-        tasks[f"xlsum_ja-{version_class.VERSION}-{version_class.PROMPT_VERSION}"] = version_class
+        tasks[
+            f"xlsum_ja-{version_class.VERSION}-{version_class.PROMPT_VERSION}"
+        ] = version_class
     return tasks

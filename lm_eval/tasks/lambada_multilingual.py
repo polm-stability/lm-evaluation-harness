@@ -63,11 +63,12 @@ class LambadaOpenAIMultilingualJapanese(LambadaOpenAI):
     DATASET_PATH = inspect.getfile(lm_eval.datasets.lambada_ja.lambada_ja)
     DATASET_NAME = "ja"
 
-
     def test_docs(self):
         # TODO: because all lambda texts are not translated yet, only take 1k translated texts
         # return self.dataset['test']
-        texts = [item['text'] for item in self.dataset['test'] if item['text'] != ''][:1000]
+        texts = [item["text"] for item in self.dataset["test"] if item["text"] != ""][
+            :1000
+        ]
         # remove last 。
         texts = [text[:-1] if text[-1] == "。" else text for text in texts]
         return texts
@@ -98,7 +99,7 @@ class LambadaOpenAIMultilingualJapanese(LambadaOpenAI):
         #     raise ImportError("Please install janome first! (`pip install janome`)")
         # word = [token.surface for token in t.tokenize(doc)][-1]
         # return word
-    
+
     def construct_requests(self, doc, ctx):
         ll, is_greedy = rf.loglikelihood(ctx, self.doc_to_target(doc))
 

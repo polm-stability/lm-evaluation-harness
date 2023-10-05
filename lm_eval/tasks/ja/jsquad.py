@@ -166,11 +166,10 @@ class JSQuAD(Task):
         out["details"] = {
             "question": doc["question"],
             "response": continuation,
-            "gold": doc["answers"]
+            "gold": doc["answers"],
         }
 
         return out
-
 
     def aggregation(self):
         return {

@@ -2,8 +2,8 @@
 JGLUE: Japanese General Language Understanding Evaluation
 https://aclanthology.org/2022.lrec-1.317/
 
-JGLUE, Japanese General Language Understanding Evaluation, is built to measure the general NLU ability in Japanese. 
-JGLUE has been constructed from scratch without translation. 
+JGLUE, Japanese General Language Understanding Evaluation, is built to measure the general NLU ability in Japanese.
+JGLUE has been constructed from scratch without translation.
 
 Homepage: https://github.com/yahoojapan/JGLUE
 """
@@ -27,11 +27,11 @@ _CITATION = """
 """
 
 
-
 class MARCJaWithFintanPrompt(BalancedMultipleChoiceTask):
     """
     prompt template is taken from [ChatGPT vs BERT: どちらが日本語をより理解できるのか?](https://fintan.jp/page/9126/)
     """
+
     VERSION = 1.1
     PROMPT_VERSION = 0.2
     DATASET_PATH = "shunk031/JGLUE"
@@ -60,7 +60,7 @@ class MARCJaWithFintanPrompt(BalancedMultipleChoiceTask):
         return {
             "query": doc["sentence"],
             "choices": self.CHOICES,
-            "gold": int(doc["label"]), 
+            "gold": int(doc["label"]),
         }
 
     def doc_to_text(self, doc):
@@ -68,10 +68,7 @@ class MARCJaWithFintanPrompt(BalancedMultipleChoiceTask):
         製品レビュー:{query}
         センチメント:
         """
-        return (
-            f"製品レビュー:{doc['query']}\n"
-            "センチメント:"
-        )
+        return f"製品レビュー:{doc['query']}\n" "センチメント:"
 
     def doc_to_target(self, doc):
         return doc["choices"][doc["gold"]]
@@ -81,17 +78,19 @@ class MARCJaWithFintanPrompt(BalancedMultipleChoiceTask):
             rf.loglikelihood(ctx, "{}".format(choice))[0] for choice in doc["choices"]
         ]
 
-        return lls
+        # this is only used for error analysis
+        # lls.append(rf.greedy_until(ctx, [self.SEP]))
 
+        return lls
 
 
 class MARCJaWithJAAlpacaPrompt(MARCJaWithFintanPrompt):
     """
-    This prompt format was inspired by the below data in fujiki/japanese_alpaca_data. 
+    This prompt format was inspired by the below data in fujiki/japanese_alpaca_data.
     ```
     {
-        'instruction': '以下のテキストを、ポジティブまたはネガティブの感情クラスのいずれかに分類してください。', 
-        'input': '製品が遅すぎて使い勝手が悪かったので、あまり好きではありませんでした。', 
+        'instruction': '以下のテキストを、ポジティブまたはネガティブの感情クラスのいずれかに分類してください。',
+        'input': '製品が遅すぎて使い勝手が悪かったので、あまり好きではありませんでした。',
         'output': 'ネガティブ。'
     }
     ```
@@ -99,6 +98,7 @@ class MARCJaWithJAAlpacaPrompt(MARCJaWithFintanPrompt):
     - data: https://huggingface.co/datasets/fujiki/japanese_alpaca_data
     - code: https://github.com/Stability-AI/gpt-neox/blob/c130a4edc1120dccec8f02a34eb60d3e8f484cd3/finetune/finetune_base_ja.py#LL118C23-L127C11
     """
+
     PROMPT_VERSION = 0.3
     DESCRIPTION = "以下は、タスクを説明する指示と、文脈のある入力の組み合わせです。要求を適切に満たす応答を書きなさい。\n\n"
     INSTRUCTION = "以下の製品レビューを、ポジティブまたはネガティブの感情クラスのいずれかに分類してください。"
@@ -108,18 +108,17 @@ class MARCJaWithJAAlpacaPrompt(MARCJaWithFintanPrompt):
         """
         以下は、タスクを説明する指示と、文脈のある入力の組み合わせです。要求を適切に満たす応答を書きなさい。
 
-        ### 指示: 
+        ### 指示:
         {instruction}
 
-        ### 入力: 
+        ### 入力:
         {input}
 
-        ### 応答: 
+        ### 応答:
         {response}
         """
-        input_text = doc['query']
+        input_text = doc["query"]
         return f"### 指示:\n{self.INSTRUCTION}\n\n### 入力:\n{input_text}\n\n### 応答:\n"
-
 
 
 class MARCJaWithRinnaInstructionSFT(MARCJaWithFintanPrompt):
@@ -127,15 +126,18 @@ class MARCJaWithRinnaInstructionSFT(MARCJaWithFintanPrompt):
     Reference:
     - HF Hub: https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft
     """
+
     PROMPT_VERSION = 0.4
-    DESCRIPTION = "ユーザー: 与えられた製品レビューを、ポジティブまたはネガティブの感情クラスのいずれかに分類してください。<NL>システム: 分かりました。<NL>"    
+    DESCRIPTION = (
+        "ユーザー: 与えられた製品レビューを、ポジティブまたはネガティブの感情クラスのいずれかに分類してください。<NL>システム: 分かりました。<NL>"
+    )
     CHOICES = ["ポジティブ", "ネガティブ"]
     SEP = "<NL>"
     FEWSHOT_SEP = "<NL>"
 
     def doc_to_text(self, doc):
-        input_text = doc['query']
-        return f"ユーザー: {input_text}{self.SEP}システム: "   
+        input_text = doc["query"]
+        return f"ユーザー: {input_text}{self.SEP}システム: "
 
 
 class MARCJaWithRinnaBilingualInstructionSFT(MARCJaWithRinnaInstructionSFT):
@@ -143,11 +145,13 @@ class MARCJaWithRinnaBilingualInstructionSFT(MARCJaWithRinnaInstructionSFT):
     Reference:
     - HF Hub: https://huggingface.co/rinna/bilingual-gpt-neox-4b-instruction-sft
     """
+
     PROMPT_VERSION = 0.5
-    DESCRIPTION = "ユーザー: 与えられた製品レビューを、ポジティブまたはネガティブの感情クラスのいずれかに分類してください。\nシステム: 分かりました。\n"
+    DESCRIPTION = (
+        "ユーザー: 与えられた製品レビューを、ポジティブまたはネガティブの感情クラスのいずれかに分類してください。\nシステム: 分かりました。\n"
+    )
     SEP = "\n"
     FEWSHOT_SEP = "\n"
-
 
 
 VERSIONS = [
@@ -161,5 +165,7 @@ VERSIONS = [
 def construct_tasks():
     tasks = {}
     for version_class in VERSIONS:
-        tasks[f"marc_ja-{version_class.VERSION}-{version_class.PROMPT_VERSION}"] = version_class
+        tasks[
+            f"marc_ja-{version_class.VERSION}-{version_class.PROMPT_VERSION}"
+        ] = version_class
     return tasks
