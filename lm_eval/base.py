@@ -740,10 +740,10 @@ class BalancedMultipleChoiceTask(MultipleChoiceTask):
             "balanced_acc": (acc, gold),
             "mcc": (gold, pred),
             "macro_f1": (gold, pred),
-                "details": {
-                    "question": self.doc_to_text(doc),
-                    "response": response,
-                }
+            "details": {
+                "question": self.doc_to_text(doc),
+                "response": response,
+            },
         }
 
     def higher_is_better(self):
