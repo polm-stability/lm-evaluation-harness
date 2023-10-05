@@ -711,6 +711,13 @@ class MultipleChoiceTask(Task):
         }
 
 class BalancedMultipleChoiceTask(MultipleChoiceTask):
+    """A task where the choices are the same every time, and accuracy should be
+    calculated separately for each class.
+
+    Originally created for marc-ja, which is severely imbalanced, though also
+    useful with less weird datasets. Not suitable for datasets where the choices
+    change for every question.
+    """
     def process_results(self, doc, results):
         gold = doc["gold"]
 
