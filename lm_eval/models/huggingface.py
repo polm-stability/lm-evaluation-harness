@@ -228,7 +228,7 @@ class HuggingFaceAutoLM(BaseLM):
         if not use_accelerate and not load_in_8bit:
             try:
                 self.model.to(self._device)
-            except:
+            except:  # noqa: E722
                 print(
                     "Failed to place model onto specified device. This may be because the model is quantized via `bitsandbytes`. If the desired GPU is being used, this message is safe to ignore."
                 )

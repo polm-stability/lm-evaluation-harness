@@ -55,7 +55,7 @@ class HFLM(BaseLM):
         if not load_in_8bit:
             try:
                 self.gpt2.to(self.device)
-            except:
+            except:  # noqa: E722
                 print(
                     "Failed to place model onto specified device. This may be because the model is quantized via `bitsandbytes`. If the desired GPU is being used, this message is safe to ignore."
                 )
