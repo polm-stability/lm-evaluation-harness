@@ -18,7 +18,7 @@ class HFLM(BaseLM):
         batch_size=1,
         load_in_8bit: Optional[bool] = False,
         trust_remote_code: Optional[bool] = False,
-        use_fast: Optional[bool] = True
+        use_fast: Optional[bool] = True,
     ):
         super().__init__()
 
@@ -56,7 +56,9 @@ class HFLM(BaseLM):
             try:
                 self.gpt2.to(self.device)
             except:
-                print("Failed to place model onto specified device. This may be because the model is quantized via `bitsandbytes`. If the desired GPU is being used, this message is safe to ignore.")
+                print(
+                    "Failed to place model onto specified device. This may be because the model is quantized via `bitsandbytes`. If the desired GPU is being used, this message is safe to ignore."
+                )
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(
             pretrained if tokenizer is None else tokenizer,
             revision=revision,
@@ -120,10 +122,10 @@ class HFLM(BaseLM):
     def _model_generate(self, context, max_length, eos_token_id):
         return self.gpt2.generate(
             context,
-            max_length=max_length, 
-            eos_token_id=eos_token_id, 
-            pad_token_id=eos_token_id, 
-            do_sample=False
+            max_length=max_length,
+            eos_token_id=eos_token_id,
+            pad_token_id=eos_token_id,
+            do_sample=False,
         )
 
 

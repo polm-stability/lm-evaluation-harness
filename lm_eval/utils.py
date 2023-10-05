@@ -227,6 +227,7 @@ def run_task_tests(task_list: List[str]):
             f"Not all tests for the specified tasks ({task_list}) ran successfully! Error code: {pytest_return_val}"
         )
 
+
 def bleu(refs, preds):
     """
     Returns `t5` style BLEU scores. See the related implementation:
@@ -248,6 +249,7 @@ def bleu(refs, preds):
         use_effective_order=False,
     ).score
     return score
+
 
 def rouge(refs, preds):
     """
@@ -276,6 +278,7 @@ def rouge(refs, preds):
     result = aggregator.aggregate()
     return {type: result[type].mid.fmeasure * 100 for type in rouge_types}
 
+
 def rouge2_mecab(refs, preds, tokenizer):
     """This uses a MeCab tokenizer for Japanese text.
 
@@ -284,7 +287,7 @@ def rouge2_mecab(refs, preds, tokenizer):
     Otherwise it is the same as the generic rouge scoring.
     """
     rouge_types = ["rouge2"]
-    # mecab-based rouge 
+    # mecab-based rouge
     scorer = rouge_scorer.RougeScorer(
         rouge_types,
         tokenizer=tokenizer,

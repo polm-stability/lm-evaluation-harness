@@ -359,7 +359,7 @@ class BaseLM(LM):
                 raise NotImplementedError
             if isinstance(until, str):
                 until = [until]
-            # (primary_until,) = self.tok_encode(until[0])   
+            # (primary_until,) = self.tok_encode(until[0])
             primary_until = self.tok_encode(until[0])
             if len(primary_until) == 0:
                 primary_until = self.tokenizer.eos_token_id
@@ -629,9 +629,9 @@ class Task(abc.ABC):
             FEWSHOT_SEP = self.FEWSHOT_SEP
         elif hasattr(self, "SEP"):
             FEWSHOT_SEP = f"{self.SEP}{self.SEP}"
-        else:        
+        else:
             FEWSHOT_SEP = "\n\n"
-            
+
         if description:
             description += FEWSHOT_SEP
         elif hasattr(self, "DESCRIPTION"):
@@ -670,7 +670,7 @@ class Task(abc.ABC):
 
         example = self.doc_to_text(doc)
         return description + labeled_examples + example
-    
+
     def set_tokenizer(self, tokenizer):
         self.tokenizer = tokenizer
 
@@ -709,6 +709,7 @@ class MultipleChoiceTask(Task):
             "acc": mean,
             "acc_norm": mean,
         }
+
 
 class BalancedMultipleChoiceTask(MultipleChoiceTask):
     """A task where the choices are the same every time, and accuracy should be
@@ -751,7 +752,6 @@ class BalancedMultipleChoiceTask(MultipleChoiceTask):
             "mcc": matthews_corrcoef,
             "macro_f1": macro_f1,
         }
-
 
 
 class PerplexityTask(Task, abc.ABC):

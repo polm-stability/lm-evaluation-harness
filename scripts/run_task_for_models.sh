@@ -10,7 +10,7 @@ cd $(dirname -- "$0")/..
 
 # models.txt is a space-separated file. To generate it, use the code in this
 # function from the project root, then edit the file to remove models you don't
-# want to use (like community). 
+# want to use (like community).
 function generate_models_txt() {
    find models/ -name harness.sh \
 	   | xargs grep MODEL_ARGS= \
@@ -26,4 +26,3 @@ done
 
 # after the batches have finished, use the following command to update results.json
 #   python scripts/merge_json.py
-

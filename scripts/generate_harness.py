@@ -33,6 +33,7 @@ Task sections just contain the `fewshot` parameter for now.
 Configs support inheritance. The file at `models/harness.conf` specifies global defaults, while files for each model group can define options not specific for a model. These files are usually the most detailed, since task and prompt selection are usually consistent for a model group.
 """
 
+
 def generate_harness(path):
 
     # grandparent is global config, parent is org config.
@@ -91,25 +92,30 @@ def generate_harness(path):
     output_path = path / "result.json"
     model_type = conf["model"]["model"]
     script = (
-      "python main.py "
-      f"--device cuda "
-      f"--model {model_type} "
-      f"--model_args {model_args} "
-      f"--tasks {tasks} "
-      f"--num_fewshot {fewshot} "
-      f"--output_path {output_path} "
-      )
+        "python main.py "
+        f"--device cuda "
+        f"--model {model_type} "
+        f"--model_args {model_args} "
+        f"--tasks {tasks} "
+        f"--num_fewshot {fewshot} "
+        f"--output_path {output_path} "
+    )
     return script.strip()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-            prog="generate_harness.py",
-            description="Generate an eval command based on configs.",
-            )
+        prog="generate_harness.py",
+        description="Generate an eval command based on configs.",
+    )
 
     parser.add_argument("model_path")
-    parser.add_argument("-w", "--write", action="store_true",
-            help="write harness script to default location")
+    parser.add_argument(
+        "-w",
+        "--write",
+        action="store_true",
+        help="write harness script to default location",
+    )
 
     args = parser.parse_args()
     path = Path(args.model_path).absolute()
@@ -124,5 +130,3 @@ if __name__ == "__main__":
         with open(opath, "w") as ofile:
             ofile.write(cmd)
         print(f"wrote script to: {opath}")
-
-

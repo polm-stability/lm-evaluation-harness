@@ -19,10 +19,12 @@ _CITATION = """
 }
 """  # noqa: W605
 
+
 class JBlimpTask(BlimpTask):
     VERSION = 0
     DATASET_PATH = "polm-stability/jblimp"
     DATASET_NAME = None
+
 
 class JBlimp(JBlimpTask):
     DATASET_NAME = "jblimp"

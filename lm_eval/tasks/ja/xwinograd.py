@@ -5,7 +5,7 @@ https://aclanthology.org/2021.findings-acl.310/
 xwinograd is a collection of Winograd schema coreference and commonsense reasoning problems in multiple languages.
 """
 
-#XXX: This dataset is multilingual, but was added specifically for Japanese eval.
+# XXX: This dataset is multilingual, but was added specifically for Japanese eval.
 # If there's interest it could easily be used in other scenarios.
 
 from lm_eval.base import rf, Task
@@ -22,6 +22,7 @@ _CITATION = """
     primaryClass={cs.CL}
 }
 """  # noqa: W605
+
 
 class XWinograd(Task):
     VERSION = 1.0
@@ -58,7 +59,7 @@ class XWinograd(Task):
     def doc_to_target(self, doc):
         ans = doc["answer"]
         return doc[f"sentence{ans}"]
-    
+
     def process_results(self, doc, results):
         li1, li2 = results
 
@@ -73,7 +74,7 @@ class XWinograd(Task):
         return {
             "acc": acc,
         }
-    
+
     def higher_is_better(self):
         return {
             "acc": True,

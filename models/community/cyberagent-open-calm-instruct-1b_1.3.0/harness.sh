@@ -7,6 +7,6 @@ python main.py \
     --model hf-causal \
     --model_args $MODEL_ARGS \
     --tasks $TASK \
-    --num_fewshot "2,3,3,3" \ 
+    --num_fewshot "2,3,3,3" \
     --device "cuda" \
     --output_path "models/open-calm-instruct-1b_1.3.0/result.json"

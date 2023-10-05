@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 import sys
 
-# Find task-specific json files and add them to result json files. 
+# Find task-specific json files and add them to result json files.
 
 # task name, ex: xwinograd_ja
 try:

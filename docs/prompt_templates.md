@@ -1,7 +1,7 @@
 # Prompt Templates
-Before evaluation, you can choose suitable prompt template for your model. 
+Before evaluation, you can choose suitable prompt template for your model.
 
-Once you found the best one of the following supported templates, replace `TEMPLATE` to the template version. 
+Once you found the best one of the following supported templates, replace `TEMPLATE` to the template version.
 
 ```bash
 MODEL_ARGS="pretrained=MODEL_PATH"
@@ -39,7 +39,7 @@ This version uses plausible prompt templates the contributor made. In most cases
 - **Format:**
   e.g. JCommonsenseQA
   ```
-  質問と回答の選択肢を入力として受け取り、選択肢から回答を選択してください。なお、回答は選択肢の番号(例:0)でするものとします。 
+  質問と回答の選択肢を入力として受け取り、選択肢から回答を選択してください。なお、回答は選択肢の番号(例:0)でするものとします。
 
   質問:{question}
   選択肢:0.{choice0},1.{choice1}, ...,4.{choice4}
@@ -51,7 +51,7 @@ This version uses plausible prompt templates the contributor made. In most cases
 ## `0.3`
 This is intended to use for instruction-tuned models trained on [Japanese Alpaca](https://huggingface.co/datasets/fujiki/japanese_alpaca_data)
 
-- **Reference:** 
+- **Reference:**
   - [masa3141 /
 japanese-alpaca-lora
 ](https://github.com/masa3141/japanese-alpaca-lora)
@@ -61,8 +61,8 @@ japanese-alpaca-lora
   e.g. JCommonsenseQA
   ```
   以下は、タスクを説明する指示と、文脈のある入力の組み合わせです。要求を適切に満たす応答を書きなさい。
-  
-  ### 指示: 
+
+  ### 指示:
   与えられた選択肢の中から、最適な答えを選んでください。
 
   出力は以下から選択してください：
@@ -71,10 +71,10 @@ japanese-alpaca-lora
   ...
   - {choice4}
 
-  ### 入力: 
+  ### 入力:
   {question}
 
-  ### 応答: 
+  ### 応答:
   {answer}
   ```
   For formats for other tasks, please see `lm_eval/tasks/TASK.py`.
@@ -90,9 +90,9 @@ This is intended to use for [rinna/japanese-gpt-neox-3.6b-instruction-sft](https
   e.g. JCommonsenseQA
   ```
   ユーザー: 与えられた選択肢の中から、最適な答えを選んでください。<NL>システム: 分かりました。
-  
+
   <NL>ユーザー: 質問：{question}<NL>選択肢：<NL>- {choice0}<NL>- {choice1}<NL>...<NL>- {choice4}<NL>
-  
+
   <NL>システム: {answer}
   ```
   For formats for other tasks, please see `lm_eval/tasks/TASK.py`.

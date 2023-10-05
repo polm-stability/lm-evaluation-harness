@@ -134,7 +134,7 @@ def evaluate(
         Dictionary of tasks. Tasks will be taken to have name task.EVAL_HARNESS_NAME if defined and type(task).__name__ otherwise.
     :param provide_description: bool
         Not implemented, and this option is deprecated and will be removed in a future version in favor of a different description providing method
-    :param num_fewshot: int or list of int 
+    :param num_fewshot: int or list of int
         Number of examples in few-shot context
     :param limit: int or list of int, optional
         Limit the number of examples per task (only use this for testing)
@@ -155,16 +155,20 @@ def evaluate(
             "WARNING: provide_description is deprecated and will be removed in a future version in favor of description_dict"
         )
     if isinstance(num_fewshot, list):
-        assert len(task_dict) == len(num_fewshot), f"The number of tasks ({len(task_dict)}) must be same as the number of elements in `num_fewshot` ({len(num_fewshot)})"
+        assert len(task_dict) == len(
+            num_fewshot
+        ), f"The number of tasks ({len(task_dict)}) must be same as the number of elements in `num_fewshot` ({len(num_fewshot)})"
     else:
         # num_fewshot is int
         num_fewshot = [num_fewshot] * len(task_dict)
     if isinstance(limit, list):
-        assert len(task_dict) == len(limit), f"The number of tasks ({len(task_dict)}) must be same as the number of elements in `num_fewshot` ({len(limit)})"
+        assert len(task_dict) == len(
+            limit
+        ), f"The number of tasks ({len(task_dict)}) must be same as the number of elements in `num_fewshot` ({len(limit)})"
     else:
         # limit is int or None
         limit = [limit] * len(task_dict)
-    
+
     decontaminate = decontamination_ngrams_path is not None
 
     task_dict_items = [
@@ -216,20 +220,30 @@ def evaluate(
             if description_dict and task_name in description_dict
             else ""
         )
-        # set tokenizer inside task 
+        # set tokenizer inside task
         if task.LOAD_TOKENIZER:
             if isinstance(lm, lm_eval.base.CachingLM):
                 task.set_tokenizer(lm.lm.tokenizer)
             else:
                 task.set_tokenizer(lm.tokenizer)
         # set max_length to task object
-        task.max_length = lm.lm.max_length if isinstance(lm, lm_eval.base.CachingLM) else lm.max_length
-        task.max_gen_toks = lm.lm.max_gen_toks if isinstance(lm, lm_eval.base.CachingLM) else lm.max_gen_toks
-        
+        task.max_length = (
+            lm.lm.max_length
+            if isinstance(lm, lm_eval.base.CachingLM)
+            else lm.max_length
+        )
+        task.max_gen_toks = (
+            lm.lm.max_gen_toks
+            if isinstance(lm, lm_eval.base.CachingLM)
+            else lm.max_gen_toks
+        )
+
         limit_local = limit[idx]
         if isinstance(limit_local, float):
             limit_local = int(limit_local * len(task_docs))
-            print(f"Use {limit_local}/{len(task_docs)} samples corresponding to the ratio of {limit[idx]}")
+            print(
+                f"Use {limit_local}/{len(task_docs)} samples corresponding to the ratio of {limit[idx]}"
+            )
         for doc_id, doc in enumerate(itertools.islice(task_docs, 0, limit_local)):
 
             if decontaminate and task.should_decontaminate():

@@ -76,7 +76,7 @@ def main():
         num_fewshot = [int(n) for n in args.num_fewshot.split(",")]
     else:
         num_fewshot = int(args.num_fewshot)
-    
+
     if args.limit is not None:
         if "," in args.limit:
             limit = [int(n) if n.isdigit() else float(n) for n in args.limit.split(",")]
