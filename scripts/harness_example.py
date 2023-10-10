@@ -16,7 +16,7 @@ def main():
         "verbose": True,
     }
 
-    run_job(executor, main_eval, args=eval_args, output_path="./check.json")
+    run_job(executor, main_eval, eval_args=eval_args, output_path="./check.json")
 
 if __name__ == "__main__":
     main()
