@@ -7,7 +7,7 @@ from main_eval import main as main_eval
 def build_task_list(tasks, prompt):
     out = []
     # Some tasks don't have a prompt version
-    promptless = ["xwinograd"]
+    promptless = ["xwinograd_ja"]
     for task in tasks:
         if task not in promptless:
             out.append(f"{task}-{prompt}")
@@ -18,7 +18,7 @@ def build_task_list(tasks, prompt):
 def main():
     executor = build_executor("eval", gpus_per_task=8, cpus_per_gpu=12)
 
-    tasks = build_task_list(JAEVAL8_TASKS, "0.2")
+    tasks = build_task_list(JAEVAL8_TASKS, "0.3")
     eval_args = {
         "tasks": tasks,
         "num_fewshot": JAEVAL8_FEWSHOT,
