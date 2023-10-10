@@ -6,6 +6,7 @@ from pathlib import Path
 
 from main_eval import main as main_eval
 
+# These are the standard 8 tasks
 JAEVAL8_TASKS = ["jcommonsenseqa-1.1", "jnli-1.1", "marc_ja-1.1", "jsquad-1.1", "jaqket_v2-0.1", "xlsum_ja", "xwinograd_ja", "mgsm"]
 JAEVAL8_FEWSHOT = [3, 3, 3, 2, 1, 1, 0, 5]
 
