@@ -18,7 +18,7 @@ def build_task_list(tasks, prompt):
 def main():
     executor = build_executor("eval", gpus_per_task=8, cpus_per_gpu=12)
 
-    tasks = built_task_list(JAEVAL8_TASKS, "0.2")
+    tasks = build_task_list(JAEVAL8_TASKS, "0.2")
     eval_args = {
         "tasks": tasks,
         "num_fewshot": JAEVAL8_FEWSHOT,
