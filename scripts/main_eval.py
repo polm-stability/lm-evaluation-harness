@@ -81,6 +81,10 @@ def pattern_match(patterns, source_list):
 
 
 def main(eval_args: dict, description_dict_path: str = None, output_path: str = None):
+    """Run evaluation and optionally save output.
+
+    For a description of eval args, see `simple_evaluate`. 
+    """
     description_dict = {}
     if description_dict_path:
         with open(description_dict_path, "r") as f:
