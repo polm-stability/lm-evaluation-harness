@@ -696,6 +696,9 @@ class MultipleChoiceTask(Task):
         return {
             "acc": acc,
             "acc_norm": acc_norm,
+            "details": {
+                "scores": results,
+            },
         }
 
     def higher_is_better(self):
@@ -743,6 +746,7 @@ class BalancedMultipleChoiceTask(MultipleChoiceTask):
             "details": {
                 "question": self.doc_to_text(doc),
                 "response": response,
+                "scores": results,
             },
         }
 
