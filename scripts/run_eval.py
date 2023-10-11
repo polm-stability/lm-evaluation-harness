@@ -58,7 +58,11 @@ def build_executor(
     return executor
 
 
-def build_shell_script_task(script_path):
+def build_shell_script_task(script_path, args, repo):
+    """This is how you can wrap an existing harness.sh.
+
+    This is not currently used.
+    """
     task = CommandFunction(["bash", args.harness_script], cwd=repo)
     return task
 
