@@ -56,7 +56,7 @@ This is intended to use for instruction-tuned models trained on [Japanese Alpaca
 japanese-alpaca-lora
 ](https://github.com/masa3141/japanese-alpaca-lora)
   - https://github.com/Stability-AI/gpt-neox/blob/bed0b5aa66142aa649299b76d4e3948efccd0bf4/finetune/templates.py
-- **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jnli`, `marc_ja`, `jaqket_v2`, `xlsum_ja`, `mgsm`
+- **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jnli`, `marc_ja`, `jcola`, `jaqket_v2`, `xlsum_ja`, `mgsm`
 - **Format:**
   e.g. JCommonsenseQA
   ```
@@ -85,7 +85,7 @@ This is intended to use for [rinna/japanese-gpt-neox-3.6b-instruction-sft](https
 
 
 - **Reference:** [rinna/japanese-gpt-neox-3.6b-instruction-sft](https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft)
-- **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jnli`, `marc_ja`, `jaqket_v2`, `xlsum_ja`, `mgsm`
+- **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jnli`, `marc_ja`, `jcola`, `jaqket_v2`, `xlsum_ja`, `mgsm`
 - **Format:**
   e.g. JCommonsenseQA
   ```
@@ -102,7 +102,7 @@ This is intended to use for [rinna/bilingual-gpt-neox-4b-instruction-sft](https:
 
 
 - **Reference:** [rinna/bilingual-gpt-neox-4b-instruction-sft](https://huggingface.co/rinna/bilingual-gpt-neox-4b-instruction-sft)
-- **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jnli`, `marc_ja`, `jaqket_v2`, `xlsum_ja`, `mgsm`
+- **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jnli`, `marc_ja`, `jcola`, `jaqket_v2`, `xlsum_ja`, `mgsm`
 - **Format:**
   e.g. JCommonsenseQA
   ```
@@ -123,7 +123,7 @@ This is intended to use for [rinna/bilingual-gpt-neox-4b-instruction-sft](https:
 This is intended to used for Llama2-chat variants
 
 - **Reference:** https://huggingface.co/blog/llama2#how-to-prompt-llama-2
-- **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jnli`, `marc_ja`, `jaqket_v2`, `xlsum_ja`, `mgsm`
+- **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jnli`, `marc_ja`, `jcola`, `jaqket_v2`, `xlsum_ja`, `mgsm`
 - **Usage:** Set the correct system prompt to an envrionment variable `SYSTEM_PROMPT`.
 - **Format:**
   e.g. JCommonsenseQA

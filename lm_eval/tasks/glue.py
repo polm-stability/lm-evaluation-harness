@@ -15,7 +15,8 @@ Homepage: https://gluebenchmark.com/
 """
 import numpy as np
 from lm_eval.base import rf, Task
-from lm_eval.metrics import mean, matthews_corrcoef, f1_score, yesno
+from lm_eval.metrics import mean, matthews_corrcoef, f1_score, yesno, macro_f1
+from lm_eval.metrics import balanced_mean
 from lm_eval.utils import general_detokenize
 
 
@@ -90,13 +91,22 @@ class CoLA(Task):
         ll_true, ll_false = results
         pred = ll_true > ll_false
         gold = doc["label"]
-        return {"mcc": (gold, pred)}
+        acc = 1.0 if gold == pred else 0.0
+        return {
+            "balanced_acc": (acc, gold),
+            "mcc": (gold, pred),
+            "macro_f1": (gold, pred),
+        }
 
     def higher_is_better(self):
-        return {"mcc": True}
+        return {"balanced_acc": True, "mcc": True, "macro_f1": True}
 
     def aggregation(self):
-        return {"mcc": matthews_corrcoef}
+        return {
+            "balanced_acc": balanced_mean,
+            "mcc": matthews_corrcoef,
+            "macro_f1": macro_f1,
+        }
 
 
 class SST(Task):

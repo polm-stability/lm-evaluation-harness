@@ -55,6 +55,19 @@ python main.py \
     --output_path "result.json"
 ```
 
+### JCoLA
+> JCoLA is a Japanese version of [CoLA](https://nyu-mll.github.io/CoLA/) (Warstadt+, 2019), which is a dataset for targeted syntactic evaluations of language models in Japanese, which consists of 10,020 sentences with acceptability judgments by linguists. The sentences are manually extracted from linguistics journals, handbooks and textbooks.
+
+**sample script**
+```
+python main.py \
+    --model hf-causal \
+    --model_args $MODEL_ARGS \
+    --tasks "jcola-0.0-0.1" \
+    --num_fewshot "3" \
+    --output_path "result.json"
+```
+
 ## [JaQuAD](https://huggingface.co/datasets/SkelterLabsInc/JaQuAD)
 
 > Japanese Question Answering Dataset (JaQuAD), released in 2022, is a human-annotated dataset created for Japanese Machine Reading Comprehension. JaQuAD is developed to provide a SQuAD-like QA dataset in Japanese.

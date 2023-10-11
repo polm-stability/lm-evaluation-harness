@@ -57,6 +57,7 @@ from .ja import jaquad
 from .ja import jcommonsenseqa
 from .ja import jnli
 from .ja import marc_ja
+from .ja import jcola
 from .ja import jblimp
 from .ja import wikilingua
 from .ja import xwinograd
@@ -333,6 +334,8 @@ TASK_REGISTRY = {
     **jnli.construct_tasks(),
     "marc_ja": marc_ja.MARCJaWithFintanPrompt,
     **marc_ja.construct_tasks(),
+    "jcola": jcola.JCoLA,
+    **jcola.construct_tasks(),
     "jblimp": jblimp.JBlimp,
     **wikilingua.construct_tasks(),
     "xwinograd_ja": xwinograd.XWinogradJA,
