@@ -88,7 +88,7 @@ class JNLIWithFintanPrompt(BalancedMultipleChoiceTask):
             rf.loglikelihood(ctx, "{}".format(choice))[0] for choice in doc["choices"]
         ]
         # this is only used for error analysis
-        if os.environ.get('DEBUG_MULTIPLECHOICE'):
+        if os.environ.get("DEBUG_MULTIPLECHOICE"):
             lls.append(rf.greedy_until(ctx, [self.SEP]))
         return lls
 

@@ -81,7 +81,7 @@ class MARCJaWithFintanPrompt(BalancedMultipleChoiceTask):
         ]
 
         # this is only used for error analysis
-        if os.environ.get('DEBUG_MULTIPLECHOICE'):
+        if os.environ.get("DEBUG_MULTIPLECHOICE"):
             lls.append(rf.greedy_until(ctx, [self.SEP]))
 
         return lls
