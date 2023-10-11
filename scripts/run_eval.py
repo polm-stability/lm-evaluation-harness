@@ -85,7 +85,8 @@ def run_job(executor, task, *args, **kwargs):
         output = job.result()
         print("Job finished successfully!")
         notify(f":white_check_mark: Eval Finished for `{job}`")
-    except Exception as ee:
+        return output
+    except Exception as ee:  # noqa: F841
         # submitit doesn't seem to have a parent class for their exceptions, so
         # just catch everything. We want to be aware of any failure anyway.
         # If this is noisy we can ignore certain kinds of early failures.
@@ -140,8 +141,9 @@ def run_eval_shell_script():
     try:
         output = job.result()
         print("Job finished successfully!")
-        notify(f":white_check_mark: Eval Finished for `{script}`")
-    except Exception as ee:
+        notify(f":white_check_mark: Eval Finished for `{args.harness_script}`")
+        return output
+    except Exception as ee:  # noqa: F841
         # submitit doesn't seem to have a parent class for their exceptions, so
         # just catch everything. We want to be aware of any failure anyway.
         # If this is noisy we can ignore certain kinds of early failures.
@@ -156,4 +158,4 @@ def run_eval_shell_script():
 
 
 if __name__ == "__main__":
-    run_eval()
+    run_eval_shell_script()

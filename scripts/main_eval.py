@@ -89,7 +89,6 @@ def main(eval_args: dict, description_dict_path: str = None, output_path: str = 
 
     For a description of eval args, see `simple_evaluate`.
     """
-    description_dict = {}
     if description_dict_path:
         with open(description_dict_path, "r") as f:
             eval_args["description_dict"] = json.load(f)
@@ -104,6 +103,8 @@ def main(eval_args: dict, description_dict_path: str = None, output_path: str = 
         with open(output_path, "w") as f:
             f.write(dumped)
 
+    return results
+
 
 if __name__ == "__main__":
     args = parse_args()
@@ -117,7 +118,7 @@ if __name__ == "__main__":
     output_path = args.get("output_path", None)
     args.pop("output_path", None)
 
-    main(args, description_dict_path, output_path)
+    results = main(args, description_dict_path, output_path)
 
     print(
         f"{args['model']} ({args['model_args']}), limit: {args['limit']}, "
