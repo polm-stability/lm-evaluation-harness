@@ -8,6 +8,7 @@ JGLUE has been constructed from scratch without translation.
 Homepage: https://github.com/yahoojapan/JGLUE
 """
 from lm_eval.base import BalancedMultipleChoiceTask, rf
+import os
 
 _CITATION = """
 @inproceedings{kurihara-etal-2022-jglue,
@@ -87,7 +88,8 @@ class JNLIWithFintanPrompt(BalancedMultipleChoiceTask):
             rf.loglikelihood(ctx, "{}".format(choice))[0] for choice in doc["choices"]
         ]
         # this is only used for error analysis
-        lls.append(rf.greedy_until(ctx, [self.SEP]))
+        if os.environ.get('DEBUG_MULTIPLECHOICE'):
+            lls.append(rf.greedy_until(ctx, [self.SEP]))
         return lls
 
 
