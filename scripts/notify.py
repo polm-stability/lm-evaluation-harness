@@ -13,6 +13,7 @@ WEBHOOK = os.environ.get("WEBHOOK_URL")
 if WEBHOOK is None:
     print("Webhook URL not found in WEBHOOK_URL env var. Will just print messages.")
 
+
 def notify(message):
     headers = {"Content-Type": "application/json"}
     data = json.dumps({"text": message})
@@ -20,7 +21,6 @@ def notify(message):
         print(message)
     else:
         requests.post(WEBHOOK, data=data, headers=headers)
-
 
 
 if __name__ == "__main__":

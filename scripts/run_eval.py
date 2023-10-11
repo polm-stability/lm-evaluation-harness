@@ -7,8 +7,18 @@ from pathlib import Path
 from main_eval import main as main_eval
 
 # These are the standard 8 tasks
-JAEVAL8_TASKS = ["jcommonsenseqa-1.1", "jnli-1.1", "marc_ja-1.1", "jsquad-1.1", "jaqket_v2-0.2", "xlsum_ja-1.0", "xwinograd_ja", "mgsm-1.0"]
+JAEVAL8_TASKS = [
+    "jcommonsenseqa-1.1",
+    "jnli-1.1",
+    "marc_ja-1.1",
+    "jsquad-1.1",
+    "jaqket_v2-0.2",
+    "xlsum_ja-1.0",
+    "xwinograd_ja",
+    "mgsm-1.0",
+]
 JAEVAL8_FEWSHOT = [3, 3, 3, 2, 1, 1, 0, 5]
+
 
 def eval_task():
     args = {
@@ -37,7 +47,6 @@ def run_eval_example():
     }
 
     run_job(executor, main_eval, args=args, output_path="./check.json")
-
 
 
 def build_executor(

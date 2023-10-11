@@ -46,6 +46,7 @@ def parse_args():
 
     return parser.parse_args()
 
+
 def clean_args(args) -> dict:
     """Handle conversion to lists etc. for args"""
 
@@ -66,9 +67,12 @@ def clean_args(args) -> dict:
         args.num_fewshot = [int(n) for n in args.num_fewshot.split(",")]
 
     if args.limit is not None:
-        args.limit = [int(n) if n.isdigit() else float(n) for n in args.limit.split(",")]
+        args.limit = [
+            int(n) if n.isdigit() else float(n) for n in args.limit.split(",")
+        ]
 
     return vars(args)
+
 
 # Returns a list containing all values of the source_list that
 # match at least one of the patterns
@@ -83,7 +87,7 @@ def pattern_match(patterns, source_list):
 def main(eval_args: dict, description_dict_path: str = None, output_path: str = None):
     """Run evaluation and optionally save output.
 
-    For a description of eval args, see `simple_evaluate`. 
+    For a description of eval args, see `simple_evaluate`.
     """
     description_dict = {}
     if description_dict_path:
@@ -101,21 +105,20 @@ def main(eval_args: dict, description_dict_path: str = None, output_path: str = 
             f.write(dumped)
 
 
-
 if __name__ == "__main__":
     args = parse_args()
     args = clean_args(args)
 
     # This is not used
-    args.pop('provide_description', None)
+    args.pop("provide_description", None)
     # treat non-eval args separately
-    description_dict_path = args.get('description_dict_path', None)
-    args.pop('description_dict_path', None)
-    output_path = args.get('output_path', None)
-    args.pop('output_path', None)
+    description_dict_path = args.get("description_dict_path", None)
+    args.pop("description_dict_path", None)
+    output_path = args.get("output_path", None)
+    args.pop("output_path", None)
 
     main(args, description_dict_path, output_path)
-    
+
     print(
         f"{args['model']} ({args['model_args']}), limit: {args['limit']}, "
         f"num_fewshot: {args['num_fewshot']}, batch_size: {args['batch_size']}"

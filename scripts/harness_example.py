@@ -4,6 +4,7 @@ from run_eval import build_executor, run_job
 from run_eval import JAEVAL8_TASKS, JAEVAL8_FEWSHOT
 from main_eval import main as main_eval
 
+
 def build_task_list(tasks, prompt):
     out = []
     # Some tasks don't have a prompt version
@@ -14,6 +15,7 @@ def build_task_list(tasks, prompt):
         else:
             out.append(task)
     return out
+
 
 def main():
     executor = build_executor("eval", gpus_per_task=8, cpus_per_gpu=12)
@@ -30,6 +32,7 @@ def main():
     }
 
     run_job(executor, main_eval, eval_args=eval_args, output_path="./check.json")
+
 
 if __name__ == "__main__":
     main()
