@@ -31,22 +31,7 @@ def eval_task():
         "verbose": True,
     }
 
-    main(args, output_path="./check.json")
-
-
-def run_eval_example():
-    executor = build_executor("eval", gpus_per_task=8, cpus_per_gpu=12)
-    eval_args = {
-        "tasks": ["jsquad-1.1-0.2"],
-        "num_fewshot": [1],
-        "model": "hf-causal",
-        "model_args": "pretrained=rinna/japanese-gpt-1b,use_fast=False",
-        "device": "cuda",
-        "limit": 100,
-        "verbose": True,
-    }
-
-    run_job(executor, main_eval, args=args, output_path="./check.json")
+    main_eval(args, output_path="./check.json")
 
 
 def build_executor(
