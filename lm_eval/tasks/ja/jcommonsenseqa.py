@@ -8,6 +8,9 @@ JGLUE has been constructed from scratch without translation.
 Homepage: https://github.com/yahoojapan/JGLUE
 """
 import os
+import warnings
+import time
+
 from lm_eval.base import MultipleChoiceTask, rf
 import numpy as np
 
@@ -118,6 +121,7 @@ class JCommonsenseQAWithFintanPrompt(JCommonsenseQA):
     DESCRIPTION = (
         "質問と回答の選択肢を入力として受け取り、選択肢から回答を選択してください。なお、回答は選択肢の番号(例:0)でするものとします。 \n\n"
     )
+    DID_WARNING = False
 
     def doc_to_text(self, doc):
         """
@@ -125,6 +129,14 @@ class JCommonsenseQAWithFintanPrompt(JCommonsenseQA):
         選択肢:0.choice0,1.choice1, ...,4.choice4
         回答:
         """
+        if not self.DID_WARNING:
+            warnings.warn(
+                "#" * 100
+                + "\n\nprompt version `0.2` for JCommonsenseQA tends to output low scores! We highly recommend using `0.2.1` instead!\n\n"
+                + "#" * 100
+            )
+            self.DID_WARNING = True
+            time.sleep(5)
         choices = ",".join(
             [f"{idx}.{choice}" for idx, choice in enumerate(doc["choices"])]
         )
@@ -132,6 +144,26 @@ class JCommonsenseQAWithFintanPrompt(JCommonsenseQA):
 
     def doc_to_target(self, doc):
         return f"{doc['gold']}"
+
+
+class JCommonsenseQAWithFintanPromptV21(JCommonsenseQA):
+    VERSION = 1.1
+    PROMPT_VERSION = "0.2.1"
+    DESCRIPTION = "与えられた選択肢の中から、最適な答えを選んでください。 \n\n"
+
+    def doc_to_text(self, doc):
+        """
+        与えられた選択肢の中から、最適な答えを選んでください。
+
+        質問：{question}
+        選択肢：
+        - {choice0}
+        - {choice4}
+        回答：
+        """
+        choices = "\n".join([f"- {choice}" for choice in doc["choices"]])
+        input_text = f"質問：{doc['goal']}\n選択肢：\n{choices}\n回答："
+        return input_text
 
 
 class JCommonsenseQAWithJAAlpacaPrompt(JCommonsenseQA):
@@ -246,6 +278,7 @@ class JCommonsenseQAWithLlama2(JCommonsenseQA):
 VERSIONS = [
     JCommonsenseQA,
     JCommonsenseQAWithFintanPrompt,
+    JCommonsenseQAWithFintanPromptV21,
     JCommonsenseQAWithJAAlpacaPrompt,
     JCommonsenseQAWithRinnaInstructionSFT,
     JCommonsenseQAWithRinnaBilingualInstructionSFT,

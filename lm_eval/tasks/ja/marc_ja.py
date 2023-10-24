@@ -39,6 +39,7 @@ class MARCJaWithFintanPrompt(BalancedMultipleChoiceTask):
     DATASET_NAME = "MARC-ja"
     DESCRIPTION = "製品レビューをnegativeかpositiveのいずれかのセンチメントに分類してください。出力は小文字化してください。 \n\n"
     CHOICES = ["positive", "negative"]
+    SEP = "\n"
 
     def has_training_docs(self):
         return True
@@ -80,7 +81,8 @@ class MARCJaWithFintanPrompt(BalancedMultipleChoiceTask):
         ]
 
         # this is only used for error analysis
-        # lls.append(rf.greedy_until(ctx, [self.SEP]))
+        if os.environ.get("DEBUG_MULTIPLECHOICE"):
+            lls.append(rf.greedy_until(ctx, [self.SEP]))
 
         return lls
 
