@@ -157,5 +157,12 @@ def run_eval_shell_script():
         raise
 
 
+def run_eval_submitit():
+    """Run evaluation using submitit."""
+    executor = build_executor()
+    # By wrapping everything in a function, we don't have to pass args.
+    run_job(executor, eval_task)
+
+
 if __name__ == "__main__":
     run_eval_shell_script()

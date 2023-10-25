@@ -205,6 +205,30 @@ We support wildcards in task names, for example you can run all of the machine-t
 
 We currently only support one prompt per task, which we strive to make the "standard" as defined by the benchmark's authors. If you would like to study how varying prompts causes changes in the evaluation score, check out the [BigScience fork](https://github.com/bigscience-workshop/lm-evaluation-harness) of this repo. We are currently working on upstreaming this capability to `main`.
 
+## Cluster Usage
+
+The evaluation suite can be called via the Python API, which makes it possible to script jobs with [submitit](https://github.com/facebookincubator/submitit), for example. You can find a detailed example of how this works in `scripts/run_eval.py`.
+
+Running a job via submitit has two steps: preparing the **executor**, which controls cluster options, and preparing the actual **evaluation** options.
+
+First you need to configure the executor. This controls cluster job details, like how many GPUs or nodes to use. For a detailed example, see `build_executor` in `run_eval.py`, but a minimal example looks like this:
+
+    base_args = {... cluster args ...}
+    executor = submitit.AutoExecutor(folder="./logs")
+    executor.update_parameters(**base_args)
+
+Once the executor is prepared, you need to actually run the evaluation task. A detailed example of wrapping the API to make this easy is in the `eval_task` function, which mainly just calls out to `main` in `scripts/main_eval.py`. The basic structure is like this:
+
+    def my_task():
+        args = {... eval args ...}
+
+        # this is the function from main_eval.py
+        main_eval(args, output_path="./hoge.json")
+
+    job = executor.submit(my_task)
+
+You can then get output from the job and check that it completed successfully. See `run_job` for an example of how that works.
+
 ## Implementing new tasks
 
 To implement a new task in the eval harness, see [this guide](./docs/task_guide.md).
