@@ -33,18 +33,18 @@ class JNLIWithFintanPrompt(BalancedMultipleChoiceTask):
     prompt template is taken from [ChatGPT vs BERT: どちらが日本語をより理解できるのか?](https://fintan.jp/page/9126/)
     """
 
-    VERSION = 1.1
+    VERSION = 1.3
     PROMPT_VERSION = 0.2
     DATASET_PATH = "shunk031/JGLUE"
     DATASET_NAME = "JNLI"
     DESCRIPTION = (
-        "前提と仮説の関係をentailment、contradiction、neutralの中から回答してください。\n\n"
+        "前提と仮説の関係を含意、矛盾、中立の中から回答してください。\n\n"
         + "制約:\n"
-        + "- 前提から仮説が、論理的知識や常識的知識を用いて導出可能である場合はentailmentと出力\n"
-        + "- 前提と仮説が両立しえない場合はcontradictionと出力\n"
-        + "- そのいずれでもない場合はneutralと出力\n\n"
+        + "- 前提から仮説が、論理的知識や常識的知識を用いて導出可能である場合は含意と出力\n"
+        + "- 前提と仮説が両立しえない場合は矛盾と出力\n"
+        + "- そのいずれでもない場合は中立と出力\n\n"
     )
-    CHOICES = ["entailment", "contradiction", "neutral"]
+    CHOICES = ["含意", "矛盾", "中立"]
     SEP = "\n"
 
     def has_training_docs(self):
@@ -91,6 +91,27 @@ class JNLIWithFintanPrompt(BalancedMultipleChoiceTask):
         if os.environ.get("DEBUG_MULTIPLECHOICE"):
             lls.append(rf.greedy_until(ctx, [self.SEP]))
         return lls
+
+    def fewshot_context(
+        self,
+        doc,
+        num_fewshot,
+        provide_description=None,
+        rnd=None,
+        description=None,
+        stratified=False,
+    ):
+        """
+        TODO: move this to `MultipleChoiceTask`.
+        Directly implementing this in `MultipleChoiceTask` will break the task versioning
+        as the metric definition will get updated, and thus we need to incrementally apply this to all
+        tasks that inherit `MultipleChoiceTask` AND bump their task `VERSION`, and
+        only after all tasks have been updated, then we can move this to `MultipleChoiceTask`.
+        """
+        # Use stratified sampling
+        return super().fewshot_context(
+            doc, num_fewshot, provide_description, rnd, description, stratified=True
+        )
 
 
 class JNLIWithJAAlpacaPrompt(JNLIWithFintanPrompt):
@@ -187,9 +208,9 @@ class JNLIWithLlama2(JNLIWithJAAlpacaPrompt):
         与えられた前提と仮説の関係を回答してください。
 
         出力は以下から選択してください：
-        entailment
-        contradiction
-        neutral
+        含意
+        矛盾
+        中立
 
         前提：{premise}
         仮説：{hypothesis} [/INST]

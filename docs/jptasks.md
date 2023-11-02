@@ -30,7 +30,7 @@ python main.py \
 ```
 
 ### JNLI
-> JNLI is a Japanese version of the NLI (Natural Language Inference) dataset. NLI is a task to recognize the inference relation that a premise sentence has to a hypothesis sentence. The inference relations are `entailment`, `contradiction`, and `neutral`.
+> JNLI is a Japanese version of the NLI (Natural Language Inference) dataset. NLI is a task to recognize the inference relation that a premise sentence has to a hypothesis sentence. The inference relations are `含意`, `矛盾`, and `中立`.
 
 **sample script**
 ```
