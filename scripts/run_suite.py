@@ -8,7 +8,7 @@ from typing import Optional
 import os
 from pathlib import Path
 
-from lm_eval import tasks, evaluator
+from lm_eval import evaluator
 
 # get path of current file
 FILE_PATH = Path(os.path.dirname(os.path.realpath(__file__)))
