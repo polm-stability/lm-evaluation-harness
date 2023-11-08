@@ -9,24 +9,12 @@ import os
 from pathlib import Path
 
 from lm_eval import evaluator
+from lm_eval.prompts import PROMPT_CODES
 
 # get path of current file
 FILE_PATH = Path(os.path.dirname(os.path.realpath(__file__)))
 # Path to suite configs
 SUITE_DIR = FILE_PATH / "../lm_eval/suites"
-
-# names for prompts
-# TODO move this into lm_eval
-PROMPT_CODES = {
-    "user": "0.0",
-    "jgpt": "0.1",
-    "fintan": "0.2",
-    "fintan2": "0.2.1",
-    "ja-alpaca": "0.3",
-    "rinna-sft": "0.4",
-    "rinna-bilingual": "0.5",
-    "llama2": "0.6",
-}
 
 
 @dataclass
