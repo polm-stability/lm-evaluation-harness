@@ -92,7 +92,14 @@ def load_suite(name):
 
 
 def run_suite(
-    model_args, suite, prompt, *, model_type="hf-causal", output=None, verbose=False
+    model_args,
+    suite,
+    prompt,
+    *,
+    model_type="hf-causal",
+    output=None,
+    verbose=False,
+    limit=None,
 ):
     # Confusing detail: in the "simple evaluate", "model" is the HF model type,
     # which is almost always hf-causal or hf-causal-experimental. `model_args`
@@ -118,6 +125,7 @@ def run_suite(
         num_fewshot=num_fewshot,
         device=device,
         verbose=verbose,
+        limit=limit,
     )
 
 
@@ -135,6 +143,12 @@ def main():
     parser.add_argument("-o", "--output", help="Output file")
     parser.add_argument("-v", "--verbose", action="store_true")
 
+    # TODO would it be better to just use a "quick" setting that runs 10
+    # iterations? We don't need arbitrary numeric control
+    parser.add_argument(
+        "-l", "--limit", type=int, help="number of iterations to run (for testing)"
+    )
+
     args = parser.parse_args()
 
     margs = f"pretrained={args.model}"
@@ -148,6 +162,7 @@ def main():
         model_type=args.model_type,
         output=args.output,
         verbose=args.verbose,
+        limit=args.limit,
     )
 
 
