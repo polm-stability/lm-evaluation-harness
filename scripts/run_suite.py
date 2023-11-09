@@ -98,13 +98,8 @@ def run_suite(
     # device never changes in practice
     device = "cuda"
 
-    print("suite", suite)
     specs = load_suite(suite)
-    print(specs)
     tasks, num_fewshot = build_eval_args(specs, prompt)
-    print(tasks)
-    print(num_fewshot)
-    print(model_args)
 
     evaluator.simple_evaluate(
         model=model_type,
