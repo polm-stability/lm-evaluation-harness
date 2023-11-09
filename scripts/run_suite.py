@@ -2,34 +2,10 @@
 # Run a suite of tests
 
 import argparse
-import configparser
-from dataclasses import dataclass
-from typing import Optional
-import os
-from pathlib import Path
 
 from lm_eval import evaluator
 from lm_eval.prompts import PROMPT_CODES
-
-# get path of current file
-FILE_PATH = Path(os.path.dirname(os.path.realpath(__file__)))
-# Path to suite configs
-SUITE_DIR = FILE_PATH / "../lm_eval/suites"
-
-
-@dataclass
-class TaskSpec:
-    """Specification of a task in an eval suite.
-
-    A suite is a list of these specs, plus a prompt."""
-
-    # The real arguments have to be massaged into messy strings and parallel
-    # lists, but this is a more reasonable structure - we can handle conversion
-    # separately.
-
-    name: str
-    fewshot: int
-    version: Optional[str]
+from lm_eval.suites import TaskSpec, load_suite
 
 
 def build_eval_args(specs: list[TaskSpec], prompt: str) -> tuple[list[str], list[int]]:
@@ -47,36 +23,6 @@ def build_eval_args(specs: list[TaskSpec], prompt: str) -> tuple[list[str], list
         fewshot.append(spec.fewshot)
 
     return (tasks, fewshot)
-
-
-def load_suite(name):
-    """Read in configuration for a test suite.
-
-    A suite will have a config file named something like `my_suite.conf`. For
-    each task in the file, a version, fewshot config, and any other details
-    will be specified.
-
-    Example entry:
-
-        [tasks.mgsm]
-        version = 1.0
-        fewshot = 5
-    """
-    conf = configparser.ConfigParser()
-    conf.read(SUITE_DIR / (name + ".conf"))
-
-    specs = []
-    for key, val in conf.items():
-        if not key.startswith("tasks."):
-            continue
-
-        spec = TaskSpec(
-            name=key.split(".", 1)[1],
-            version=val.get("version", None),
-            fewshot=int(val["fewshot"]),
-        )
-        specs.append(spec)
-    return specs
 
 
 def run_suite(
