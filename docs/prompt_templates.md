@@ -1,5 +1,6 @@
 # Prompt Templates
-Before evaluation, you can choose suitable prompt template for your model.
+
+Before evaluation, you can choose suitable prompt template for your model. Prompts can be referred to by version numbers (like `0.0`) or by short names (like `custom`). You can check the mapping [here](lm_eval/prompts.py).
 
 Once you found the best one of the following supported templates, replace `TEMPLATE` to the template version.
 
@@ -15,11 +16,12 @@ python main.py \
     --output_path "result.json"
 ```
 
-## `0.0`
+## `0.0 user`
 This version uses plausible prompt templates the contributor made. In most cases, templates in paper are well-investigated so that they should be good to use. But, the reality is that some eval tasks we want to support are never used before. In this case, the contributors would carefully think of the plausible prompt template as this version.
 
 
-## `0.1`
+## `0.1 jgpt`
+
 - **Reference:** [日本語に特化した60億パラメータ規模のGPTモデルの構築と評価](https://www.anlp.jp/proceedings/annual_meeting/2023/pdf_dir/H9-4.pdf)
 - **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jaqket_v2`
 - **Format:**
@@ -33,7 +35,8 @@ This version uses plausible prompt templates the contributor made. In most cases
   ```
   For formats for other tasks, please see `lm_eval/tasks/TASK.py`.
 
-## `0.2`
+## `0.2 fintan`
+
 - **Reference:** [ChatGPT vs BERT: どちらが日本語をより理解できるのか?](https://fintan.jp/page/9126/)
 - **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jnli`, `marc_ja`, `jaqket_v2`
 - **Format:**
@@ -48,7 +51,8 @@ This version uses plausible prompt templates the contributor made. In most cases
   For formats for other tasks, please see `lm_eval/tasks/TASK.py`.
 
 
-## `0.3`
+## `0.3 ja-alpaca`
+
 This is intended to use for instruction-tuned models trained on [Japanese Alpaca](https://huggingface.co/datasets/fujiki/japanese_alpaca_data)
 
 - **Reference:**
@@ -80,7 +84,8 @@ japanese-alpaca-lora
   For formats for other tasks, please see `lm_eval/tasks/TASK.py`.
 
 
-## `0.4`
+## `0.4 rinna-sft`
+
 This is intended to use for [rinna/japanese-gpt-neox-3.6b-instruction-sft](https://huggingface.co/rinna/japanese-gpt-neox-3.6b-instruction-sft).
 
 
@@ -97,7 +102,8 @@ This is intended to use for [rinna/japanese-gpt-neox-3.6b-instruction-sft](https
   ```
   For formats for other tasks, please see `lm_eval/tasks/TASK.py`.
 
-## `0.5`
+## `0.5 rinna-bilingual`
+
 This is intended to use for [rinna/bilingual-gpt-neox-4b-instruction-sft](https://huggingface.co/rinna/bilingual-gpt-neox-4b-instruction-sft).
 
 
@@ -119,8 +125,9 @@ This is intended to use for [rinna/bilingual-gpt-neox-4b-instruction-sft](https:
   For formats for other tasks, please see `lm_eval/tasks/TASK.py`.
 
 
-## `0.6`
-This is intended to used for Llama2-chat variants
+## `0.6 llama2`
+
+This is intended to used for Llama2-chat variants.
 
 - **Reference:** https://huggingface.co/blog/llama2#how-to-prompt-llama-2
 - **Supported Tasks:** `jsquad`, `jaquad`, `jcommonsenseqa`, `jnli`, `marc_ja`, `jcola`, `jaqket_v2`, `xlsum_ja`, `mgsm`

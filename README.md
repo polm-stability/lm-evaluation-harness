@@ -122,6 +122,8 @@ python main.py \
     --device cuda:0
 ```
 
+Also check the script for running [evalutation suites](#evaluation-suites).
+
 Additional arguments can be provided to the model constructor using the `--model_args` flag. Most notably, this supports the common practice of using the `revisions` feature on the Hub to store partially trained checkpoints:
 
 ```bash
@@ -180,6 +182,24 @@ python write_out.py \
 ```
 
 This will write out one text file for each task.
+
+## Evaluation Suites
+
+If you have multiple tasks that you routinely run as an evaluation suite, you can save the suite configuration in a single file and run it with different models. Save a suite config to `lm_eval/suites/configs/[suite].conf`, formatted like this:
+
+    [tasks.my_task]
+    version = 1.0
+    fewshot = 2
+
+    [tasks.other_task]
+    version = 1.1
+    fewshot = 3
+
+Then you can run the suite like this:
+
+    python scripts/run_suite.py [model_path] [suite_name] [prompt_version] -m [model_args]
+
+For prompt versions, see the [prompt docs](docs/prompt_templates.md) and the [list of prompt names](lm_eval/prompts.py).
 
 ## Advanced Usage
 
