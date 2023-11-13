@@ -4,7 +4,7 @@
 import argparse
 
 from lm_eval import evaluator
-from lm_eval.prompts import PROMPT_CODES
+from lm_eval.prompts import get_prompt_code
 from lm_eval.suites import TaskSpec, load_suite
 
 
@@ -13,11 +13,13 @@ def build_eval_args(specs: list[TaskSpec], prompt: str) -> tuple[list[str], list
 
     tasks = []
     fewshot = []
-    prompt_code = PROMPT_CODES[prompt]
     for spec in specs:
         task_name = spec.name
+
+        code = get_prompt_code(prompt, task_name)
+
         if spec.version is not None:
-            task_name += "-" + spec.version + "-" + prompt_code
+            task_name += "-" + spec.version + "-" + code
 
         tasks.append(task_name)
         fewshot.append(spec.fewshot)
