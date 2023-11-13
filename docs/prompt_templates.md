@@ -1,6 +1,6 @@
 # Prompt Templates
 
-Before evaluation, you can choose suitable prompt template for your model. Prompts can be referred to by version numbers (like `0.0`) or by short names (like `custom`). You can check the mapping [here](lm_eval/prompts.py).
+Before evaluation, you can choose suitable prompt template for your model. Prompts can be referred to by version numbers (like `0.0`) or by short names (like `custom`). You can check the mapping in [`prompts.py`](../lm_eval/prompts.py).
 
 Once you found the best one of the following supported templates, replace `TEMPLATE` to the template version.
 
