@@ -25,6 +25,7 @@ from .scrolls.task import (
     SummScreenFD,
     QMSum,
 )
+from .ja.jsquad.task import JSQuAD
 
 eval_logger = utils.eval_logger
 

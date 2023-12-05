@@ -1,0 +1,32 @@
+task: jsquad
+
+group: [jglue, ja, ja8]
+
+dataset_path: shunk031/JGLUE
+dataset_name: JSQuAD
+dataset_kwargs: null
+
+training_split: train
+validation_split: validation
+test_split: null
+
+fewshot_split: train # check this
+
+process_docs: !function utils.process_docs
+
+# for now just doing the default prompt
+doc_to_text: |
+  [題名]と[問題]から[質問]に対する[答え]を抜き出しなさい
+
+  [題名]: {{title}}
+  [問題]: {{context}}
+  [質問]: {{question}}
+doc_to_target:
+
+
+
+
+
+
+
+
