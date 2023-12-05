@@ -26,6 +26,7 @@ from .scrolls.task import (
     QMSum,
 )
 from .ja.jsquad.task import JSQuAD
+from .ja.jaquad.task import JaQuAD
 
 eval_logger = utils.eval_logger
 
