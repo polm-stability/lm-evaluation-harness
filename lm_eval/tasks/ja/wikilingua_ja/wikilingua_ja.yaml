@@ -1,0 +1,30 @@
+task: wikilingua_ja
+
+group: [ja, ja8]
+dataset_path: GEM/wiki_lingua
+dataset_name: ja
+dataset_kwargs: null
+
+# This only has train docs, but the framework doesn't like that, so remap them.
+validation_split: validation
+training_split: train
+test_split: test
+
+doc_to_text: |
+  与えられた文章を要約して下さい。
+
+  {{source}}
+doc_to_target: "{{target}}"
+
+metric_list:
+  - metric: rouge2_max
+    aggregation: mean
+    higher_is_better: true
+  - metric: rouge2_acc
+    aggregation: mean
+    higher_is_better: true
+  - metric: rouge2_diff
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  - version: 0.0

@@ -1,0 +1,26 @@
+task: jcola
+
+group: [ja, ja8]
+dataset_path: shunk031/JGLUE
+dataset_name: JCoLA
+dataset_kwargs: null
+output_type: multiple_choice
+
+# This only has train docs, but the framework doesn't like that, so remap them.
+validation_split: validation
+training_split: train
+test_split: null
+
+# use an empty document and just evaluate the choices
+doc_to_text: "{{sentence}}\n質問:この文は文法的ですか？\n答え:"
+doc_to_choice: ["いいえ", "はい"]
+doc_to_target: label
+
+metric_list:
+  - metric: acc
+  # TODO add other metrics
+  #- metric: balanced_acc
+  #- metric: mcc
+  #- metric: macro_f1
+metadata:
+  - version: 0.0

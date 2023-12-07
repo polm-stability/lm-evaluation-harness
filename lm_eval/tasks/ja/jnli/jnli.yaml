@@ -1,0 +1,36 @@
+task: jnli
+
+group: [ja, ja8]
+dataset_path: shunk031/JGLUE
+dataset_name: JNLI
+dataset_kwargs: null
+output_type: multiple_choice
+
+# This only has train docs, but the framework doesn't like that, so remap them.
+validation_split: validation
+training_split: train
+test_split: null
+
+# use an empty document and just evaluate the choices
+doc_to_text: |
+  前提と仮説の関係を含意、矛盾、中立の中から回答してください。
+
+  制約:
+  - 前提から仮説が、論理的知識や常識的知識を用いて導出可能である場合は含意と出力
+  - 前提と仮説が両立しえない場合は矛盾と出力
+  - そのいずれでもない場合は中立と出力
+
+  前提:{{sentence1}}
+  仮説:{{sentence2}}
+  関係:
+doc_to_choice: ["合意", "矛盾", "中立"]
+doc_to_target: label
+
+metric_list:
+  - metric: acc
+  # TODO add other metrics
+  #- metric: balanced_acc
+  #- metric: mcc
+  #- metric: macro_f1
+metadata:
+  - version: 0.0
