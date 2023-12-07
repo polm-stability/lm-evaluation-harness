@@ -164,12 +164,13 @@ Use can use python functions for certain arguments by using the `!function` oper
 
 ## (No Longer Recommended) Direct `Task` Subclassing
 
+TODO this is the wrong file name?
 The prior implementation method of new tasks was to subclass `Task`. While we intend to migrate all tasks to the new YAML implementation option going forward, it remains possible to subclass the Task class and implement custom logic. For more information, see `docs/task_guide.md` in v0.3.0 of the `lm-evaluation-harness`.
 
 
 ## Including a Base YAML
 
-You can base a YAML on another YAML file as a template. This can be handy when you need to just change the prompt for `doc_to_text` but keep the rest the same or change `filters` to compare which is better. Simply use `include` in the YAML file and write the name of the template you want to base from. This assumes that the base temeplate is in the same directory. Otherwise, You will need to define the full path.
+You can base a YAML on another YAML file as a template. This can be handy when you need to just change the prompt for `doc_to_text` but keep the rest the same or change `filters` to compare which is better. Simply use `include` in the YAML file and write the name of the template you want to base from. This assumes that the base template is in the same directory. Otherwise, You will need to define the full path.
 ```
 include: <YAML filename or with full path>
 ...
