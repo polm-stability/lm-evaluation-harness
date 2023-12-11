@@ -176,6 +176,9 @@ class Task(abc.ABC):
 
     OUTPUT_TYPE: str = None
 
+    # Required for some tasks when calculating fewshot
+    LOAD_TOKENIZER: bool = False
+
     def __init__(
         self,
         data_dir=None,

@@ -27,6 +27,7 @@ from .scrolls.task import (
 )
 from .ja.jsquad.task import JSQuAD
 from .ja.jaquad.task import JaQuAD
+from .ja.jaqket.taskv2 import JAQKETV2
 
 eval_logger = utils.eval_logger
 
