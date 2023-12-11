@@ -27,10 +27,11 @@ doc_to_choice: ["合意", "矛盾", "中立"]
 doc_to_target: label
 
 metric_list:
-  - metric: acc
-  # TODO add other metrics
-  #- metric: balanced_acc
-  #- metric: mcc
-  #- metric: macro_f1
+  #  - metric: balanced_acc
+  #    aggregation: balanced_acc
+  #  - metric: mcc
+  #    aggregation: matthews_corrcoef
+  - metric: macro_f1
+    aggregation: macro_f1
 metadata:
   - version: 0.0

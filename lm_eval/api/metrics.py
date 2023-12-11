@@ -1,4 +1,5 @@
 import math
+from collections import defaultdict
 from collections.abc import Iterable
 
 import numpy as np
@@ -23,6 +24,23 @@ def mean(arr):
 def median(arr):
     return arr[len(arr) // 2]
 
+@register_aggregation("balanced_acc")
+def balanced_acc(arr):
+    # input is a list of pairs of (gold, pred)
+    labels = [ii[0] for ii in arr]
+    accs = [(1.0 if ii[0] == ii[1] else 0.0) for ii in arr]
+    # first group the results
+    by_class = defaultdict(list)
+    for acc, label in zip(accs, labels):
+        by_class[label].append(acc)
+
+    # calculate class averages
+    avgs = []
+    for key, vals in by_class.items():
+        avgs.append(sum(vals) / len(vals))
+
+    # average the class values
+    return sum(avgs) / len(avgs)
 
 # Certain metrics must be calculated across all documents in a benchmark.
 # We use them as aggregation metrics, paired with no-op passthrough metric fns.
@@ -50,6 +68,15 @@ def f1_score(items):
 
     return np.max(fscore)
 
+@register_aggregation("macro_f1")
+def macro_f1_score(items):
+    breakpoint()
+    unzipped_list = list(zip(*items))
+    golds = unzipped_list[0]
+    preds = unzipped_list[1]
+    fscore = sklearn.metrics.f1_score(golds, preds, average="macro")
+
+    return fscore
 
 @register_aggregation("matthews_corrcoef")
 def matthews_corrcoef(items):
@@ -215,6 +242,14 @@ def mean_stderr(arr):
 def mcc_fn(items):  # This is a passthrough function
     return items
 
+@register_metric(
+    metric="balanced_acc",
+    higher_is_better=True,
+    output_type="multiple_choice",
+    aggregation="balanced_acc",
+)
+def balanced_acc_fn(items):  # This is a passthrough function
+    return items
 
 @register_metric(
     metric="f1",
@@ -225,6 +260,14 @@ def mcc_fn(items):  # This is a passthrough function
 def f1_fn(items):  # This is a passthrough function
     return items
 
+@register_metric(
+    metric="macro_f1",
+    higher_is_better=True,
+    output_type="multiple_choice",
+    aggregation="macro_f1",
+)
+def macro_f1_fn(items):  # This is a passthrough function
+    return items
 
 @register_metric(
     metric="bleu",
