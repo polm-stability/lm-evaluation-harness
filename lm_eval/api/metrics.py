@@ -70,7 +70,6 @@ def f1_score(items):
 
 @register_aggregation("macro_f1")
 def macro_f1_score(items):
-    breakpoint()
     unzipped_list = list(zip(*items))
     golds = unzipped_list[0]
     preds = unzipped_list[1]
