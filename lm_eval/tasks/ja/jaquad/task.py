@@ -41,6 +41,9 @@ class JaQuAD(JSQuAD):
     DATASET_NAME = None
     VERSION = 0.1
 
+    def set_tokenizer(self, tokenizer):
+        self.tokenizer = tokenizer
+
     def training_docs(self):
         return self.dataset["train"]
 
