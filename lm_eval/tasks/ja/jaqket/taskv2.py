@@ -287,6 +287,7 @@ class JAQKETV2WithFintanPrompt(JAQKETV2):
         return answer_candidate + self.SEP + qa_prompt
 
 
+@register_task("jaqket-alpaca")
 class JAQKETV2WithJAAlpacaPrompt(JAQKETV2):
     """
     This prompt format was inspired by the below data in fujiki/japanese_alpaca_data.

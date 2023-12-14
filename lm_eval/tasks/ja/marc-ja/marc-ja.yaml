@@ -1,8 +1,8 @@
-task: jcommonsenseqa
+task: marc-ja-alpaca
 
 group: [ja, ja8]
 dataset_path: shunk031/JGLUE
-dataset_name: JCommonsenseQA
+dataset_name: MARC-ja
 dataset_kwargs: null
 output_type: multiple_choice
 
@@ -10,12 +10,11 @@ validation_split: validation
 training_split: train
 test_split: null
 
-doc_to_text: !function utils.basic_prompt
-doc_to_choice: "{{[choice0, choice1, choice2, choice3, choice4]}}"
+doc_to_text: !function utils.alpaca_prompt
+doc_to_choice: ["ポジティブ", "ネガティブ"]
 doc_to_target: label
 
 metric_list:
-  # Note other metrics are better, but this is for comparison with old evals
   - metric: acc
   - metric: balanced_acc
     aggregation: balanced_acc

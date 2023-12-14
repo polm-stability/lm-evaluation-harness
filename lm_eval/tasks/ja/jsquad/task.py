@@ -80,6 +80,9 @@ class JSQuAD(Task):
         super().__init__(**kwargs)
         self.jasquad_metric = datasets.load_metric(jasquad.__file__)
 
+    def set_tokenizer(self, tokenizer):
+        self.tokenizer = tokenizer
+
     def has_training_docs(self):
         return True
 
