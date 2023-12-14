@@ -1,0 +1,5 @@
+task: jcommonsenseqa-alpaca
+
+include: jcommonsenseqa.yaml
+
+doc_to_text: !function utils.alpaca_prompt

@@ -11,21 +11,17 @@ validation_split: validation
 training_split: train
 test_split: null
 
-doc_to_text: |
-  [問題]に対する[答え]を[選択肢]の中から選んでください。
-
-
-  [問題]:{{question}}
-  [選択肢]肢]:[{', '.join(doc['choices'])}]\n" "[答え]:"
-# this is a little weird, but this is how to append text after choices...
-doc_to_choice: "{{[choice0, choice1, choice2, choice3, choice4]}}\n[答え]:"
+doc_to_text: !function utils.basic_prompt
 doc_to_target: label
 
 metric_list:
+  # Note other metrics are better, but this is for comparison with old evals
   - metric: acc
-  # TODO add other metrics
-  #- metric: balanced_acc
-  #- metric: mcc
-  #- metric: macro_f1
+  - metric: balanced_acc
+    aggregation: balanced_acc
+  - metric: mcc
+    aggregation: matthews_corrcoef
+  - metric: macro_f1
+    aggregation: macro_f1
 metadata:
   - version: 0.0
