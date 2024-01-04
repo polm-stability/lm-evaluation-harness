@@ -1,0 +1,14 @@
+task: jcommonsenseqa-fintan
+
+include: jcommonsenseqa.yaml
+
+doc_to_text: |
+  与えられた選択肢の中から、最適な答えを選んでください。 
+
+  選択肢：
+  - {{choice0}}
+  - {{choice1}}
+  - {{choice2}}
+  - {{choice3}}
+  - {{choice4}}
+  回答：
