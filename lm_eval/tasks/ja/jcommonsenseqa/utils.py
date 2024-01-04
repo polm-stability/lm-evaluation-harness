@@ -1,8 +1,11 @@
 from inspect import cleandoc
 
 def basic_prompt(doc):
+    # This is the 0.1 prompt
     choices = ', '.join([doc[f"choice{ii}"] for ii in range(5)])
     prompt = f"""
+        [問題]に対する[答え]を[選択肢]の中から選んでください。
+
         [問題]:{doc['question']}
         [選択肢]:{choices}
         [答え]:"""

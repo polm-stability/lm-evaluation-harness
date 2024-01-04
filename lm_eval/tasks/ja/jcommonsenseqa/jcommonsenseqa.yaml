@@ -10,6 +10,8 @@ validation_split: validation
 training_split: train
 test_split: null
 
+num_fewshot: 3
+
 doc_to_text: !function utils.basic_prompt
 doc_to_choice: "{{[choice0, choice1, choice2, choice3, choice4]}}"
 doc_to_target: label

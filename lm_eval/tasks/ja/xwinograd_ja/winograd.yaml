@@ -13,6 +13,9 @@ test_split: test
 
 process_docs: !function utils.process_docs
 
+# fewshot doesn't make sense for this task
+num_fewshot: 0
+
 # use an empty document and just evaluate the choices
 doc_to_text: ""
 doc_to_choice: "{{[distractor, gold]}}"

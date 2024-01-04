@@ -11,7 +11,9 @@ validation_split: validation
 training_split: train
 test_split: null
 
-# use an empty document and just evaluate the choices
+num_fewshot: 3
+
+# This is the fintan / 0.2 prompt. There is no 0.1 prompt for this.
 doc_to_text: |
   前提と仮説の関係を含意、矛盾、中立の中から回答してください。
 
@@ -27,6 +29,7 @@ doc_to_choice: ["合意", "矛盾", "中立"]
 doc_to_target: label
 
 metric_list:
+  - metric: acc
   - metric: balanced_acc
     aggregation: balanced_acc
   - metric: mcc

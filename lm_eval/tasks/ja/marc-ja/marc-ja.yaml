@@ -10,6 +10,8 @@ validation_split: validation
 training_split: train
 test_split: null
 
+num_fewshot: 3
+
 doc_to_text: !function utils.alpaca_prompt
 doc_to_choice: ["ポジティブ", "ネガティブ"]
 doc_to_target: label
