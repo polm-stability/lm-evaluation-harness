@@ -2,7 +2,11 @@ task: marc-ja-fintan
 
 group: [ja, ja8]
 
-include: marc-ja-fintan.yaml
+include: marc-ja.yaml
 
-doc_to_text: "製品レビューをnegativeかpositiveのいずれかのセンチメントに分類してください。出力は小文字化してください。 \n\n"
+doc_to_text: |
+  製品レビューをnegativeかpositiveのいずれかのセンチメントに分類してください。出力は小文字化してください。 
+
+  製品レビュー: {{sentence}}
+  センチメント:
 doc_to_choice: ["positive", "negative"]
